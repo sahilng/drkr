@@ -1,0 +1,35 @@
+name: Website appearance problem
+description: Report unreadable text, a broken control, or another website compatibility issue.
+title: "[Website] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: "Issues are public. Remove private account information and personal content from screenshots."
+  - type: input
+    id: url
+    attributes:
+      label: Website URL
+      placeholder: https://example.com/page
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Drkr, Safari, and macOS versions
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps and appearance settings
+      description: Include global mode, any website override, and what you expected to see.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: What happened?
+      description: Describe the issue; optionally attach a screenshot with private details removed.
+    validations:
+      required: true

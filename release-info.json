@@ -1,0 +1,13 @@
+{
+  "channel": "development",
+  "distribution": "mac-app-store",
+  "repository": "https://github.com/sahilng/drkr",
+  "homepage": "https://sahilng.github.io/drkr/",
+  "support_url": "https://sahilng.github.io/drkr/support.html",
+  "privacy_url": "https://sahilng.github.io/drkr/privacy.html",
+  "bundle_identifier": "io.github.sahilng.drkr",
+  "extension_bundle_identifier": "io.github.sahilng.drkr.Extension",
+  "license": "MIT",
+  "apple_team_id": null,
+  "app_store_url": null
+}

@@ -1,0 +1,22 @@
+/* Safari injects manifest CSS before the asynchronous settings read completes.
+   Cover the original page until the first theme is ready. The CSS-only timeout
+   also reveals the page if the content script fails to run. */
+@keyframes drkr-startup-timeout {
+  from { visibility: visible; }
+  to { visibility: hidden; }
+}
+:root:not([data-drkr-ready])::before {
+  content: "" !important;
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  background: #141619 !important;
+  z-index: 2147483647 !important;
+  /* Prevent clicks on controls that have not become visible yet. */
+  pointer-events: auto !important;
+  cursor: progress !important;
+  animation: drkr-startup-timeout 1.5s steps(1, end) forwards !important;
+}

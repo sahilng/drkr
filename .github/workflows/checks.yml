@@ -1,0 +1,38 @@
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser:
+    name: Unit, rendering, and website (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    env:
+      BROWSER: ${{ matrix.browser }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Install pinned package manager
+        run: npm install --global pnpm@11.25.0 --ignore-scripts
+      - name: Install development dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Unit and source checks
+        run: pnpm test
+      - name: Install browser and system dependencies
+        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+      - name: Extension rendering and behavior
+        run: pnpm test:browser
+      - name: GitHub Pages content and layout
+        run: pnpm test:site

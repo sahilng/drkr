@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drkr</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="settings.js" defer></script>
+  <script src="popup.js" defer></script>
+</head>
+<body>
+  <header><div class="brand"><img src="icons/icon-48.png" width="36" height="36" alt=""><span>drkr<span class="dot">.</span></span></div><span class="label">LESS GLARE. MORE FOCUS.</span></header>
+  <main>
+    <section class="hero"><span class="eyebrow">A softer side of the web</span><h1>Make room<br>for the dark.</h1><p>Your eyes can take it easy.</p><span class="orbit" aria-hidden="true">☾</span></section>
+    <fieldset><legend>Dark mode</legend><div class="segments">
+      <label><input type="radio" name="mode" value="on"><span>On</span></label>
+      <label><input type="radio" name="mode" value="system"><span>System</span></label>
+      <label><input type="radio" name="mode" value="off"><span>Off</span></label>
+    </div></fieldset>
+    <section class="site-card"><div class="site-heading"><span class="eyebrow">THIS WEBSITE</span><span id="badge">Checking…</span></div><h2 id="hostname">Loading…</h2><label class="site-select"><span>Appearance</span><select id="site-mode" aria-label="Dark mode for this website"><option value="default">Use global setting</option><option value="on">Always dark</option><option value="off">Keep original</option></select></label><p id="site-note">Changes apply to open pages automatically.</p></section>
+    <label class="preference"><span><strong>Respect existing dark themes</strong><small>Let dark websites keep their own style.</small></span><input id="respect-dark" type="checkbox" role="switch"></label>
+    <p id="feedback" role="status" aria-live="polite"></p>
+  </main>
+  <footer><span class="privacy-dot"></span>On your device. No accounts. No tracking.</footer>
+</body>
+</html>

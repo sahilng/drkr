@@ -1,0 +1,10 @@
+name: Help or question
+description: Get help using Drkr.
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: How can we help?
+      description: Include Drkr and Safari versions when relevant. Keep private account data out of public reports.
+    validations:
+      required: true
