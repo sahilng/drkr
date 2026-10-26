@@ -32,11 +32,20 @@ Record results; do not infer them from Chrome checks. Test the temporary extensi
 
 Record Safari/macOS version, Drkr version, URL, global/site mode, steps, and before/after screenshots for visual bugs. Do not include private messages or account data.
 
+## Public source and website
+
+- Source: https://github.com/sahilng/drkr (MIT)
+- Website: https://sahilng.github.io/drkr/
+- Support: https://sahilng.github.io/drkr/support.html
+- Privacy: https://sahilng.github.io/drkr/privacy.html
+- All three Pages URLs verified HTTP 200 over HTTPS. Private vulnerability reporting is enabled on the repository.
+- Automated checks cover Chromium and WebKit; real Safari gates below still apply.
+
 ## Public release still requires
 
 - Complete the Safari matrix and resolve severe readability, navigation, and performance defects.
 - Choose publisher-owned bundle identifiers and Apple Developer team; archive, validate, and test the distributed signed build.
-- Supply publisher identity, support URL, and hosted privacy-policy URL. Confirm App Store privacy answers against the release binary (current code transmits no data).
+- Support and privacy pages are live on GitHub Pages. Confirm publisher identity and App Store privacy answers against the release binary (current code transmits no data).
 - Review app icon, create real Safari screenshots, choose category, age rating, availability, and complete reviewer instructions.
 - If shipping outside the Mac App Store, sign and notarize using Developer ID instead.
 

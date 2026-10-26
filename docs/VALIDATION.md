@@ -27,3 +27,5 @@ The build is a stronger development beta. These results do not establish public-
 - Publisher-specific Mac build (`io.github.sahilng.drkr`) succeeds with verified resource hashes and local ad-hoc signing. The app opens support/source links only after explicit link activation.
 
 Apple Developer enrollment, signed distribution archive, real App Store screenshots, oldest-supported OS coverage, and the remaining real-world Safari matrix are not complete.
+
+The public MIT repository and GitHub Pages site are deployed. Homepage, support, and privacy URLs each returned HTTP 200 over HTTPS. These publications do not distribute an App Store app. CI uses pinned Ubuntu 24.04, pinned action revisions, a pnpm lockfile, and separate Chromium/WebKit jobs.

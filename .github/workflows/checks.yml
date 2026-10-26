@@ -11,7 +11,7 @@ concurrency:
 jobs:
   browser:
     name: Unit, rendering, and website (${{ matrix.browser }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -31,7 +31,7 @@ jobs:
       - name: Unit and source checks
         run: pnpm test
       - name: Install browser and system dependencies
-        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+        run: pnpm exec playwright install --with-deps --only-shell ${{ matrix.browser }}
       - name: Extension rendering and behavior
         run: pnpm test:browser
       - name: GitHub Pages content and layout
