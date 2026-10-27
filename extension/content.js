@@ -3,7 +3,7 @@
   const api = globalThis.browser || globalThis.chrome;
   const S = DrkrSettings, C = DrkrColors;
   const media = matchMedia("(prefers-color-scheme: dark)");
-  const attribute = "data-drkr-node", readyAttribute = "data-drkr-ready";
+  const attribute = "data-drkr-node", readyAttribute = "data-drkr-ready", transitionAttribute = "data-drkr-transition";
   const roots = new Map(), dirty = new Map(), removed = new Set();
   const skip = new Set(["SCRIPT", "STYLE", "LINK", "META", "HEAD", "TITLE", "IMG", "VIDEO", "AUDIO", "CANVAS", "PICTURE", "SOURCE", "IFRAME"]);
   const properties = [
@@ -15,7 +15,7 @@
   ];
   const pendingControls = ':is(#drkr-override#drkr-theme,input:not([data-drkr-node]),select:not([data-drkr-node]),textarea:not([data-drkr-node]),[role="combobox"]:not([data-drkr-node])){background-color:#202328!important;color:#e0e3e7!important;color-scheme:dark!important}';
   const base = ':root {color-scheme:dark!important;background-color:#141619!important;color:#e0e3e7!important}body{background-color:#141619!important;color:#e0e3e7!important}::selection{background:#565ba3!important;color:white!important}' + (globalThis.DrkrSiteRules?.css(location.hostname) || "") + pendingControls;
-  let settings, active = false, nativeDark = false, timer, counter = 0, full = true;
+  let settings, active = false, nativeDark = false, timer, counter = 0, full = true, framePending = false;
   let scans = 0, lastScanMs = 0, processed = 0;
   const ownSheets = new WeakSet();
   function reveal() { document.documentElement?.setAttribute(readyAttribute, ""); }
@@ -51,29 +51,93 @@
     const current = sheet(state);
     if (current) current.disabled = value;
   }
+  const transitionGroups = new Map();
+  let transitionCounter = 0, nonPaintProperties;
+  function cssList(value) {
+    const parts = []; let depth = 0, start = 0;
+    for (let i = 0; i < value.length; i++) {
+      if (value[i] === "(") depth++;
+      else if (value[i] === ")") depth--;
+      else if (value[i] === "," && !depth) { parts.push(value.slice(start, i).trim()); start = i + 1; }
+    }
+    parts.push(value.slice(start).trim());
+    return parts;
+  }
+  function paintProperty(property) {
+    return /color$/.test(property) || ["fill", "stroke", "box-shadow", "text-shadow", "background-image"].includes(property);
+  }
+  function transitionGroup(style) {
+    const properties = cssList(style.transitionProperty);
+    const durations = cssList(style.transitionDuration), delays = cssList(style.transitionDelay);
+    if (!(durations.some(v => parseFloat(v) > 0) || delays.some(v => parseFloat(v) > 0)) || !properties.some(p => p === "all" || paintProperty(p))) return null;
+    const timing = cssList(style.transitionTimingFunction), behavior = cssList(style.getPropertyValue("transition-behavior") || "normal");
+    const key = [properties, durations, delays, timing, behavior].map(v => v.join("|")).join("\n");
+    if (transitionGroups.has(key)) return transitionGroups.get(key);
+    nonPaintProperties ||= Array.from(style).filter(p => !paintProperty(p) && !p.startsWith("transition"));
+    const entries = [];
+    properties.forEach((p, i) => {
+      for (const property of p === "all" ? nonPaintProperties : paintProperty(p) || p === "none" ? [] : [p]) {
+        entries.push([property, durations[i % durations.length], delays[i % delays.length], timing[i % timing.length], behavior[i % behavior.length]]);
+      }
+    });
+    const list = column => {
+      const values = entries.map(e => e[column]);
+      return values.every(v => v === values[0]) ? values[0] : values.join(",");
+    };
+    const css = entries.length ? `transition-property:${entries.map(e => e[0]).join(",")}!important;transition-duration:${list(1)}!important;transition-delay:${list(2)}!important;transition-timing-function:${list(3)}!important;transition-behavior:${list(4)}!important` : 'transition-property:none!important';
+    const group = { id: String(++transitionCounter), css };
+    if (transitionGroups.size >= 256) transitionGroups.clear();
+    transitionGroups.set(key, group);
+    return group;
+  }
+  function prepareTransitions(elements) {
+    // Read transition metadata before enabling measurement rules. Only watched
+    // transitions and dirty nodes are revisited on incremental updates.
+    const targets = new Set(elements);
+    for (const state of roots.values()) for (const el of state.transitions?.keys() || []) targets.add(el);
+    for (const el of targets) {
+      if (!el.isConnected) continue;
+      const state = rootState(el.getRootNode());
+      state.transitions ||= new Map();
+      const group = transitionGroup(getComputedStyle(el));
+      if (group) {
+        state.transitions.set(el, group);
+        if (el.getAttribute(transitionAttribute) !== group.id) el.setAttribute(transitionAttribute, group.id);
+      } else {
+        state.transitions.delete(el);
+        el.removeAttribute(transitionAttribute);
+      }
+    }
+  }
   function transitionGuard(state, enabled) {
-    // Disabling our paint rules must not start the site's color transitions.
-    // Keep this separate from the theme, and remove it before yielding a frame.
+    if (!state.transitions?.size && !state.guard) return;
     if (!state.guard && enabled) {
       const style = document.createElement("style");
-      style.setAttribute("data-drkr-sheet", "");
-      ownSheets.add(style);
-      const css = '*,*::before,*::after{transition:none!important}';
-      style.textContent = css;
+      style.setAttribute("data-drkr-sheet", ""); ownSheets.add(style);
       (state.root === document ? document.documentElement : state.root).append(style);
       let constructed = null;
       if (!style.sheet && typeof CSSStyleSheet === "function" && "adoptedStyleSheets" in state.root) {
         constructed = new CSSStyleSheet();
-        constructed.replaceSync(css);
         state.root.adoptedStyleSheets = [...state.root.adoptedStyleSheets, constructed];
       }
-      state.guard = { style, constructed };
+      state.guard = { style, constructed, css: "" };
     }
     const guard = state.guard;
     if (!guard) return;
     if (enabled) {
       if (!guard.style.isConnected) (state.root === document ? document.documentElement : state.root).append(guard.style);
       if (guard.constructed && !state.root.adoptedStyleSheets.includes(guard.constructed)) state.root.adoptedStyleSheets = [...state.root.adoptedStyleSheets, guard.constructed];
+      const groups = new Set();
+      for (const [el, group] of state.transitions || []) {
+        if (!el.isConnected || el.getRootNode() !== state.root) state.transitions.delete(el);
+        else groups.add(group);
+      }
+      const css = [...groups].map(g => `:is(#drkr-override#drkr-theme,[${transitionAttribute}="${g.id}"]){${g.css}}`).join("\n");
+      if (css !== guard.css) {
+        if (guard.constructed) guard.constructed.replaceSync(css);
+        else guard.style.textContent = css;
+        guard.css = css;
+      }
     }
     disable(guard, !enabled);
   }
@@ -234,13 +298,19 @@
     disable(state, true);
   }
   function scan() {
-    timer = null;
+    timer = null; framePending = false;
     if (!settings || !document.documentElement) return;
     const start = performance.now();
     const wanted = S.enabled(settings, location.hostname, media.matches);
     if (wanted) observe(document);
     const wasActive = active;
-    // Take a consistent author-style snapshot without animating to light colors.
+    // Prepare paint-only transition protection while author metadata is intact.
+    const transitionTargets = new Set();
+    if (wanted) {
+      if (full || !wasActive) collect(document.documentElement, true, transitionTargets);
+      else for (const [node, deep] of dirty) if (node.isConnected) collect(node, deep, transitionTargets);
+    }
+    prepareTransitions(transitionTargets);
     for (const state of roots.values()) transitionGuard(state, true);
     for (const state of roots.values()) disable(state, true);
     try {
@@ -322,15 +392,26 @@
       scans++; lastScanMs = performance.now() - start;
     }
   }
-  function schedule(all = false) {
+  function cancelScan() {
+    if (!timer) return;
+    if (framePending) cancelAnimationFrame(timer);
+    else clearTimeout(timer);
+    timer = null; framePending = false;
+  }
+  function schedule(all = false, urgent = false) {
     full ||= all;
-    if (!timer) timer = setTimeout(scan, 80);
+    if (timer) {
+      if (!urgent || framePending) return;
+      cancelScan();
+    }
+    framePending = urgent;
+    timer = urgent ? requestAnimationFrame(scan) : setTimeout(scan, 80);
   }
   const observer = new MutationObserver(records => {
-    let changed = false;
+    let changed = false, urgent = false;
     for (const record of records) {
       if (own(record.target)) continue;
-      if (record.type === "attributes" && [attribute, readyAttribute].includes(record.attributeName)) continue;
+      if (record.type === "attributes" && [attribute, readyAttribute, transitionAttribute].includes(record.attributeName)) continue;
       if (record.type === "childList") {
         const nodes = [...record.addedNodes, ...record.removedNodes].filter(node => !own(node));
         if ([...record.removedNodes].some(node => ownSheets.has(node) && [...roots.values()].some(state => state.style === node && (state.root === document || state.root.host.isConnected)))) {
@@ -343,44 +424,48 @@
         // rescanning an entire growing feed when one card is appended.
         queue(record.target, false);
         queue(record.previousSibling, false); queue(record.nextSibling, false);
-        if (nodes.some(node => node.nodeName === "STYLE" || node.nodeName === "LINK")) full = true;
+        if (nodes.some(node => node.nodeName === "STYLE" || node.nodeName === "LINK")) { full = true; urgent = true; }
+        if (record.target === document.documentElement || record.target === document.body) urgent = true;
       } else if (record.type === "characterData") {
         queue(record.target.parentElement);
       } else {
         queue(record.target);
-        if (record.target === document.documentElement || record.target === document.body) full = true;
+        if (record.target === document.documentElement || record.target === document.body) { full = true; urgent = true; }
       }
-      if (record.target.nodeName === "STYLE" || record.target.nodeName === "LINK") full = true;
+      if (record.target.nodeName === "STYLE" || record.target.nodeName === "LINK") { full = true; urgent = true; }
       changed = true;
     }
-    if (changed) schedule();
+    if (changed) schedule(false, urgent);
   });
   observe(document);
   document.addEventListener("DOMContentLoaded", () => {
-    if (timer) { clearTimeout(timer); timer = null; }
+    cancelScan();
     full = true; scan();
   }, { once: true });
-  document.addEventListener("load", event => { if (event.target.tagName === "LINK") schedule(true); }, true);
+  document.addEventListener("load", event => { if (event.target.tagName === "LINK") schedule(true, true); }, true);
   // Hover/focus states need a fresh author-style snapshot even without DOM edits.
   for (const event of ["pointerover", "pointerout", "focusin", "focusout"]) {
     document.addEventListener(event, e => {
       if (!active) return;
       const target = e.composedPath()[0];
-      queue(target, false);
-      for (const child of target?.children || []) queue(child, false);
-      // Hover rules often live on a button/card ancestor.
-      for (let parent = target?.parentElement, depth = 0; parent && depth < 2; parent = parent.parentElement, depth++) queue(parent, false);
-      schedule();
+      // Ancestor :hover/:focus-within rules can restyle a whole nested menu,
+      // including siblings of the target. Keep the scope below body/html.
+      for (let el = target, depth = 0; el && depth < 4; el = el.parentElement, depth++) {
+        if (el === document.body || el === document.documentElement) { queue(el, false); break; }
+        queue(el, true);
+      }
+      schedule(false, true);
     }, { capture: true, passive: true });
   }
-  media.addEventListener("change", () => schedule(true));
+  media.addEventListener("change", () => schedule(true, true));
   api.storage.onChanged.addListener((changes, area) => {
-    if (area === "local" && changes.settings) { settings = S.normalize(changes.settings.newValue); schedule(true); }
+    if (area === "local" && changes.settings) { settings = S.normalize(changes.settings.newValue); schedule(true, true); }
   });
   api.runtime.onMessage.addListener(message => {
     if (message.type === "drkr-status") return Promise.resolve({ active, nativeDark });
     if (message.type === "drkr-diagnostics") return Promise.resolve({ scans, lastScanMs, processed, groups: [...roots.values()].reduce((n, state) => n + state.groups.size, 0) });
   });
+  window.addEventListener("pageshow", event => { if (event.persisted) schedule(true, true); });
   api.storage.local.get("settings").then(data => { settings = S.normalize(data.settings); full = true; scan(); })
     .catch(error => { finishStartup(true); console.warn("drkr could not load preferences", error); });
 })();
