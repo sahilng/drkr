@@ -32,6 +32,14 @@
   "local_candidate": {
     "version": "1.0.0",
     "build": "5",
-    "status": "testing-contrast-and-field-flash-fixes"
+    "status": "available-in-internal-testflight"
+  },
+  "testflight": {
+    "group": "Release checks",
+    "automatic_distribution": false,
+    "latest_build": "5",
+    "version": "1.0.0",
+    "status": "testing",
+    "tester_count": 1
   }
 }
