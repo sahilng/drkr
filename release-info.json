@@ -16,5 +16,6 @@
     "currency": "USD",
     "price": "0.99",
     "status": "planned"
-  }
+  },
+  "publisher_team_status": "awaiting-account-holder-confirmation"
 }

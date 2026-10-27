@@ -8,14 +8,19 @@ if ! xcodebuild -version >/dev/null 2>&1; then
 fi
 mkdir -p "$ROOT/build"
 if [[ "${1:-}" == "--archive" ]]; then
-  if [[ -z "${DEVELOPMENT_TEAM:-}" ]]; then
-    echo "Set DEVELOPMENT_TEAM to your Apple Developer team ID before archiving."
+  PUBLISHER_TEAM="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("apple_team_id") or "")' "$ROOT/release-info.json")"
+  if [[ -z "$PUBLISHER_TEAM" ]]; then
+    echo "Confirm a publisher-controlled Apple team and set apple_team_id in release-info.json before archiving."
+    exit 1
+  fi
+  if [[ -n "${DEVELOPMENT_TEAM:-}" && "$DEVELOPMENT_TEAM" != "$PUBLISHER_TEAM" ]]; then
+    echo "DEVELOPMENT_TEAM does not match the confirmed publisher team in release-info.json."
     exit 1
   fi
   xcodebuild -project "$PROJECT" -scheme Drkr -configuration Release \
     -destination 'generic/platform=macOS' -archivePath "$ROOT/build/Drkr.xcarchive" \
     -derivedDataPath "$ROOT/build/DerivedData" \
-    DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" CODE_SIGN_STYLE=Automatic archive
+    DEVELOPMENT_TEAM="$PUBLISHER_TEAM" CODE_SIGN_STYLE=Automatic archive
   python3 "$ROOT/scripts/check-built-app.py" "$ROOT/build/Drkr.xcarchive/Products/Applications/Drkr.app"
   echo "Archive: $ROOT/build/Drkr.xcarchive (validate and distribute in Xcode Organizer)."
 elif [[ $# -eq 0 ]]; then

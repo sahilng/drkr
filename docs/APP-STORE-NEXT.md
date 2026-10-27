@@ -6,7 +6,15 @@ The public source and GitHub Pages website are separate from App Store distribut
 
 1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/). Choose individual or organization based on the publisher you intend to display. Individual enrollment displays your legal name as the seller; organization enrollment has additional verification requirements. Complete enrollment, identity verification, agreements, and payment yourself.
 2. Add the enrolled Apple account in Xcode Settings → Accounts. Obtain the Team ID. Do not share passwords, private keys, or payment details in issues or chat.
-3. Register the app identifier `io.github.sahilng.drkr` and extension identifier `io.github.sahilng.drkr.Extension` under your team, subject to availability. Confirm both targets' signing settings in Xcode. If identifiers change, update `release-info.json`, the project, and tests consistently.
+3. Confirm the publishing team is a membership you control as Account Holder. Being invited as Admin on someone else's team does not make its seller identity or payout configuration yours. You can belong to multiple teams; leaving an unrelated team is not required to publish under your own membership. Do not use an unmanaged or third-party team for Drkr.
+4. Record that confirmed Team ID in `release-info.json` as `apple_team_id`. The archive script refuses an unconfirmed team or a conflicting `DEVELOPMENT_TEAM` override.
+5. Register the app identifier `io.github.sahilng.drkr` and extension identifier `io.github.sahilng.drkr.Extension` under your team, subject to availability. Confirm both targets' signing settings in Xcode. If identifiers change, update `release-info.json`, the project, and tests consistently.
+
+## Paid distribution
+
+The planned US base price is **$0.99 USD as a one-time purchase**. The actual App Store price remains unset until the app record and publishing team are confirmed. The source remains MIT licensed.
+
+The publishing membership's Account Holder must accept the Paid Apps Agreement and complete the required tax/banking setup in App Store Connect. The publisher handles legal agreements, identity, tax, and banking information directly. No such changes have been made by the build tooling. Review [Apple's pricing instructions](https://developer.apple.com/help/app-store-connect/manage-app-pricing/set-a-price) and [banking requirements](https://developer.apple.com/help/app-store-connect/manage-banking-information/enter-banking-information/).
 
 ## Before archiving
 
@@ -18,7 +26,7 @@ The public source and GitHub Pages website are separate from App Store distribut
 ## Archive and submission
 
 ```sh
-DEVELOPMENT_TEAM=YOUR_TEAM_ID bash scripts/build-macos.sh --archive
+bash scripts/build-macos.sh --archive
 ```
 
 Open `build/Drkr.xcarchive` with Xcode Organizer, validate the signed archive, and test the distributed build. The script does not upload or submit the app.

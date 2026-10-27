@@ -28,10 +28,10 @@ This builds the checked-in **macos/Drkr/Drkr.xcodeproj** using local ad-hoc sign
 
 A local build still requires Safari's unsigned-extension option. It is not an App Store distribution build.
 
-To prepare a signed archive after choosing publisher-owned bundle identifiers and configuring your Apple Developer identity:
+To prepare a signed archive after choosing publisher-owned bundle identifiers, configuring your Apple Developer identity, and recording your confirmed Account Holder team ID as `apple_team_id` in `release-info.json`:
 
 ```sh
-DEVELOPMENT_TEAM=YOUR_TEAM_ID bash scripts/build-macos.sh --archive
+bash scripts/build-macos.sh --archive
 ```
 
 Validate and distribute the archive with Xcode Organizer. The archive path is `build/Drkr.xcarchive`. No archive is uploaded or published by the script. Team signing, hosted support/privacy URLs, and completed App Store metadata are still required. [Apple distribution documentation](https://developer.apple.com/documentation/safariservices/distributing-your-safari-web-extension).
