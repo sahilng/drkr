@@ -38,7 +38,7 @@ Record Safari/macOS version, Drkr version, URL, global/site mode, steps, and bef
 - Website: https://drkr.space/
 - Support: https://drkr.space/support.html
 - Privacy: https://drkr.space/privacy.html
-- All three Pages URLs verified HTTP 200 over HTTPS. Private vulnerability reporting is enabled on the repository.
+- Original GitHub Pages URLs were verified HTTP 200 over HTTPS before the custom-domain migration. The drkr.space DNS records are now configured; custom-domain HTTPS must be verified after GitHub issues its certificate. Private vulnerability reporting is enabled on the repository.
 - Automated checks cover Chromium and WebKit; real Safari gates below still apply.
 
 ## Public release still requires

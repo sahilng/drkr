@@ -29,3 +29,9 @@ The build is a stronger development beta. These results do not establish public-
 Apple Developer enrollment, signed distribution archive, real App Store screenshots, oldest-supported OS coverage, and the remaining real-world Safari matrix are not complete.
 
 The public MIT repository and GitHub Pages site are deployed. Homepage, support, and privacy URLs each returned HTTP 200 over HTTPS. These publications do not distribute an App Store app. CI uses pinned Ubuntu 24.04, pinned action revisions, a pnpm lockfile, and separate Chromium/WebKit jobs.
+
+## drkr.space migration
+
+All four GitHub Pages A records and the www CNAME were saved in Namecheap and verified against authoritative/public DNS. GitHub serves the site with HTTP 200 when addressed directly for drkr.space. Some resolvers still return the prior parking address, and the custom-domain TLS certificate was not yet issued at the last check. Do not treat the new HTTPS URLs as validated until normal certificate verification succeeds.
+
+The planned US App Store price is $0.99 as a one-time purchase. No App Store listing, signing team, agreement, bank, or payout configuration has been changed. Distribution archives require a confirmed publisher-controlled Team ID in release-info.json.
