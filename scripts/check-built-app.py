@@ -27,6 +27,10 @@ with (app / 'Contents/Info.plist').open('rb') as f:
     app_info = plistlib.load(f)
 with (extension / 'Info.plist').open('rb') as f:
     ext_info = plistlib.load(f)
+if app_info.get('CFBundleName') != 'drkr' or ext_info.get('CFBundleName') != 'drkr Extension':
+    raise SystemExit('Native bundle names do not match lowercase drkr branding')
+if app_info.get('ITSAppUsesNonExemptEncryption') is not False:
+    raise SystemExit('Missing reviewed encryption declaration')
 if not ext_info['CFBundleIdentifier'].startswith(app_info['CFBundleIdentifier'] + '.'):
     raise SystemExit('App/extension bundle identifier prefixes do not match')
 for info in [app_info, ext_info]:

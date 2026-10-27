@@ -64,7 +64,7 @@ test('manifest resources exist and permissions stay minimal', () => {
   const files = [...Object.values(m.icons), m.action.default_popup, ...m.content_scripts.flatMap(s => [...s.js, ...(s.css || [])])];
   for (const file of files) assert.ok(fs.existsSync(path.join(root, file)), file);
 });
-test('checked-in native project includes every entry point and matches beta versions', () => {
+test('checked-in native project includes every entry point and matches release versions', () => {
   const root = path.join(__dirname, '..');
   const m = JSON.parse(fs.readFileSync(path.join(root, 'extension/manifest.json')));
   const project = fs.readFileSync(path.join(root, 'macos/Drkr/Drkr.xcodeproj/project.pbxproj'), 'utf8');

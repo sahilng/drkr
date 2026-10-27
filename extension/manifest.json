@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "drkr \u2014 Dark Mode for Safari",
   "short_name": "drkr",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Comfortable dark mode for the web. Follow your system, or choose per website. No tracking.",
   "permissions": [
     "storage",

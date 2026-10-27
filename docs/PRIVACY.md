@@ -1,6 +1,6 @@
 # drkr privacy policy
 
-Last updated: October 26, 2026. Applies to drkr 0.2.0.
+Last updated: October 26, 2026. Applies to drkr 1.0.0.
 
 drkr changes the appearance of websites in Safari. It works locally on your device. It has no server, accounts, advertising, analytics, or telemetry. It does not transmit website content, browsing history, passwords, form entries, or payment information.
 

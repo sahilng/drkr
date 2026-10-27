@@ -1,4 +1,6 @@
-# drkr 0.2.0 validation — October 26, 2026
+# drkr validation log — October 26, 2026
+
+This is a chronological record. Early beta results and blockers are historical; the latest release-candidate status is recorded at the end.
 
 ## Completed
 
@@ -53,3 +55,26 @@ The publisher approved the existing membership/seller name and requested lowerca
 Registered `io.github.sahilng.drkr` and `io.github.sahilng.drkr.Extension` under the confirmed team. Created private App Store Connect record `6827359533` (macOS, English US, SKU `drkr-macos`). Saved the description, keywords, reviewer notes, copyright, marketing/support links, subtitle, Utilities category, and manual release setting. Configured a $0.99 USD base price with Apple's equivalent storefront prices. Saved the privacy policy URL and a Data Not Collected draft (not yet published). Availability, age rating, screenshots, accessibility answers, reviewer contact, paid distribution readiness, final version alignment, and server validation remain incomplete.
 
 The local App Store export succeeds with existing certificates. Expanded the exported package and verified current source-resource hashes, lowercase display names, and Apple Distribution signatures on both targets for team `F9QX3SUK38`. `pkgutil --check-signature` verifies the installer chain. Added `scripts/export-app-store.py` to repeat the local export without uploading or creating signing assets. This is beta 0.2.0/build 2; the draft store version defaults to 1.0. No build has been uploaded, submitted for review, or released.
+
+## Packaged Safari verification and metadata — October 26, 2026
+
+Completed the age questionnaire for the utility's actual features; Apple calculated 4+ with regional equivalents. Saved the content declaration based on drkr supplying no third-party content or browsing interface. It styles pages the user already visits in Safari. The bundled setup UI only loads local files and explicitly opens support/source links externally.
+
+Safari initially selected conflicting development registrations, so the popup did not open and pages stayed light. Removed the two drkr development registrations and registered one stable, signature-verified archive copy at `build/SafariTest/Drkr.app`. The app reports the packaged extension enabled; its actual Safari popup opens and Wikipedia renders dark with readable prose/table, a visible wordmark, and the original Moon photo. Navigation, refresh, and Back rendered dark. This does not establish all website or history-restoration cases.
+
+The publisher manually confirmed all immediate popup transitions in Safari: global Off → light, On → dark, Keep original → light, and Use global setting → the global choice. Automated popup clicks were unreliable because the computer-control connection targeted the underlying page; these passes are explicitly publisher-reported.
+
+On the original local reading fixture, the packaged extension preserved an entered input value, allowed the button handler to add content, themed the new card, and preserved the embedded color-sample image. Captured unedited real Safari screenshots at 2880×1800. `reading-controls-2880.jpg` and `reading-dark-2880.jpg` are store candidates with original content; Wikipedia screenshots are QA references. Full keyboard/VoiceOver, authenticated-site, private-window, sustained-performance, and oldest-OS coverage remain incomplete.
+
+Native bundle names are explicitly lowercase, including the application menu name. Added `ITSAppUsesNonExemptEncryption=false` after checking that the current app/extension has no encryption implementation or external network service; built-in OS/browser facilities handle any user-opened HTTPS links. The rebuilt archive and local App Store export pass. The stable Safari test copy was refreshed and the native menu verified as lowercase. Xcode’s generated Info.plist mode overwrote CFBundleName, so both native targets now use explicit Info.plists with all required bundle/version/entry-point metadata. The package checker rejects uppercase native names or a missing encryption declaration.
+
+
+## Release candidate 1.0.0/build 3
+
+Aligned the native app, extension manifest, package metadata, and private store version to 1.0.0; incremented the native build to 3. Native setup UI shows the release version and no longer suggests unsigned-extension settings to App Store users. Signed archive, 12 packaged-resource checks, lowercase native bundle-name checks, encryption metadata check, and local App Store export pass. Nine core checks pass. The extension's theming/settings code is unchanged from the packaged Safari checks above.
+
+Both original-content screenshots are uploaded to the private macOS draft and preserved in `store-assets/macos/`. Worldwide availability is configured for all 175 current storefronts on release. EU compliance shows Active with no outstanding regulatory requirements. The publisher filled and saved private reviewer contact directly with Apple; those values are not in this repository. Published the Data Not Collected privacy label after explicit approval of Apple's final attestation.
+
+GitHub's TLS certificate for drkr.space/www.drkr.space is approved and HTTPS enforcement is enabled. Homepage, support, and privacy return HTTP 200 using normal certificate verification; HTTP and www redirect to the canonical HTTPS apex. Earlier pending-TLS notes are resolved.
+
+Server-side build validation is being checked separately. No App Review submission or public release has occurred. Broader authenticated-site, full keyboard/VoiceOver, private-window, sustained-performance, and oldest-supported-OS coverage remain incomplete and must not be represented as passed.

@@ -6,7 +6,9 @@ The public source and GitHub Pages website are separate from App Store distribut
 
 The publisher's active individual membership has been verified in App Store Connect with Account Holder and Admin roles, Team ID `F9QX3SUK38`. The publisher explicitly approved proceeding under the existing membership/seller name, Rishav Gupta. The name is not a release blocker. This team is recorded in `release-info.json`; do not leave the membership or purchase another enrollment to change the displayed name.
 
-Signing preparation is complete on the publisher's Mac: Apple Development, Apple Distribution, and Mac Installer Distribution identities are installed in the login Keychain. Both explicit bundle IDs are registered. The archive and local App Store distribution export succeed; both targets have verified Apple Distribution signatures in the exported package. The private [App Store Connect record](https://appstoreconnect.apple.com/apps/6827359533/distribution) exists as **drkr — Dark Mode for Safari**, with draft description, reviewer notes, subtitle, Utilities category, support/marketing URLs, manual release, and a $0.99 US price schedule. Server-side validation, a release build, screenshots, and the remaining metadata/QA are still required. Do not commit or share private keys.
+Signing preparation is complete on the publisher's Mac: Apple Development, Apple Distribution, and Mac Installer Distribution identities are installed in the login Keychain. Both explicit bundle IDs are registered. The archive and local App Store distribution export succeed; both targets have verified Apple Distribution signatures in the exported package. The private [App Store Connect record](https://appstoreconnect.apple.com/apps/6827359533/distribution) exists as **drkr — Dark Mode for Safari**, with draft description, reviewer notes, subtitle, Utilities category, support/marketing URLs, manual release, and a $0.99 US price schedule. The 1.0.0/build 3 release candidate is archived and locally exported; server-side validation and remaining QA/accessibility review are still required. Do not commit or share private keys.
+
+Two real Safari screenshots are uploaded to the private version draft. The calculated age rating is 4+ with regional equivalents, and the content declaration is saved. Worldwide availability is configured for all 175 current storefronts after release; EU compliance now shows Active with no outstanding regulatory requirements. Homepage/support/privacy pages now pass normal HTTPS verification, and HTTP/www redirect to the canonical HTTPS apex.
 
 1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/). Choose individual or organization based on the publisher you intend to display. Individual enrollment displays your legal name as the seller; organization enrollment has additional verification requirements. Complete enrollment, identity verification, agreements, and payment yourself.
 2. Add the enrolled Apple account in Xcode Settings → Accounts. Obtain the Team ID. Do not share passwords, private keys, or payment details in issues or chat.
@@ -27,6 +29,8 @@ The publishing membership's Account Holder must accept the Paid Apps Agreement a
 - Finalize version/build numbers, a publisher-owned copyright, and distribution metadata.
 - Capture actual Safari and native app screenshots in an accepted Mac size (1280×800, 1440×900, 2560×1600, or 2880×1800). Avoid private content and do not submit mock illustrations or Playwright screenshots as actual Safari use.
 
+Two real Safari screenshots using original content from `tests/reading.html` are saved in `store-assets/macos/` as `01-controls.jpg` and `02-reading.jpg`, and uploaded to the private version draft. They show the packaged extension operating on a local page, not an illustration of its UI. Wikipedia captures are QA references only. Re-capture if the release UI changes.
+
 ## Archive and submission
 
 ```sh
@@ -36,11 +40,11 @@ python3 scripts/export-app-store.py
 
 Open `build/Drkr.xcarchive` with Xcode Organizer, validate the signed archive, and test the distributed build. The script does not upload or submit the app.
 
-The export tool uses existing valid local distribution/installer identities for the configured team and writes `build/AppStore/Drkr.pkg`. It refuses stale archive resources or a different signing team; it does not upload, register devices, create certificates, or update provisioning. The current package is beta 0.2.0/build 2, while the draft store version is 1.0. Align versions for the final release after QA.
+The export tool uses existing valid local distribution/installer identities for the configured team and writes `build/AppStore/Drkr.pkg`. It refuses stale archive resources or a different signing team; it does not upload, register devices, create certificates, or update provisioning. The current release candidate is 1.0.0/build 3, and the private store version is aligned to 1.0.0.
 
 Create the macOS record in App Store Connect. Use `STORE-LISTING.md` for the draft description, support/privacy/marketing URLs, and reviewer steps. Complete price/availability, category, age rating, screenshots, accessibility answers, export-compliance questions, and App Privacy against the actual release binary. Check the hosted URLs after deployment.
 
-App Store Connect privacy is currently expected to be “Data Not Collected” because the extension does not transmit data. Reassess if any release changes add network requests, analytics, accounts, or SDKs. GitHub support issues are public and voluntary, separate from automatic extension data collection.
+App Store Connect’s “Data Not Collected” label is published with explicit publisher approval because the extension does not transmit data. Reassess if any release changes add network requests, analytics, accounts, or SDKs. GitHub support issues are public and voluntary, separate from automatic extension data collection.
 
 Submit only after the signed build and metadata have been reviewed. No App Store approval or public release is implied by the local build or GitHub publication.
 

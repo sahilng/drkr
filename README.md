@@ -1,4 +1,4 @@
-# drkr · macOS beta 0.2.0
+# drkr · macOS release candidate 1.0.0
 
 A local-first Safari dark-mode extension. Global On / System / Off, exact-hostname overrides, native dark-theme detection, preserved media, and a toolbar popup. No production dependencies, network services, analytics, or accounts. MIT licensed.
 
@@ -73,7 +73,7 @@ Open `http://127.0.0.1:8765/safari-fixture.html` in Safari. It displays checks b
 
 ## Known limitations and release gate
 
-Safari's protected pages cannot be themed. Closed shadow roots, shadow roots attached later without observable DOM changes, distant selector dependencies such as `:has()`, CSS animations, native browser popovers, and canvas-heavy apps may need site-specific support. Logos with baked-in black pixels can have poor contrast because artwork isn't inverted. Large document-wide CSS changes still require a full scan. This is a macOS beta, not advertised iPhone/iPad support.
+Safari's protected pages cannot be themed. Closed shadow roots, shadow roots attached later without observable DOM changes, distant selector dependencies such as `:has()`, CSS animations, native browser popovers, and canvas-heavy apps may need site-specific support. Logos with baked-in black pixels can have poor contrast because artwork isn't inverted. Large document-wide CSS changes still require a full scan. This release candidate targets macOS; iPhone/iPad support is not advertised.
 
 [Beta checklist](docs/BETA-CHECKLIST.md) · [Privacy draft](docs/PRIVACY.md) · [Store listing draft](docs/STORE-LISTING.md)
 

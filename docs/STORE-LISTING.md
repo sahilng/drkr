@@ -18,7 +18,7 @@ drkr needs permission to read and change website appearance. You choose which we
 
 Setup: Open drkr, open Safari Extensions Settings, enable drkr, allow access to your chosen websites, then reload existing tabs. Click the drkr toolbar icon for settings.
 
-Keywords draft: dark,night,appearance,reading,theme,safari
+Keywords: dark,mode,night,shift,appearance,reading,theme,safari
 
 ## App Store Connect URLs
 
@@ -38,4 +38,6 @@ Verify the hosted pages respond successfully before submitting. Current code tra
 3. Click drkr's toolbar icon. Verify On, Off, System, and website overrides.
 4. No account, payment, or login is required. No backend services are used.
 
-Private draft record: [App Store Connect](https://appstoreconnect.apple.com/apps/6827359533/distribution), Apple ID `6827359533`, SKU `drkr-macos`, macOS, English (U.S.). Description, keywords, support/marketing URLs, copyright, reviewer notes, subtitle, Utilities category, and manual release are saved. Before submission: finalize availability, minimum Safari version, screenshots, privacy answers, age rating, accessibility disclosures, reviewer contact, paid distribution requirements, and working HTTPS URLs. Align the release binary version with the draft store version (currently 1.0). Do not label Chrome screenshots as Safari screenshots. Nothing has been submitted to App Review or released.
+Private draft record: [App Store Connect](https://appstoreconnect.apple.com/apps/6827359533/distribution), Apple ID `6827359533`, SKU `drkr-macos`, macOS, English (U.S.). Description, keywords, support/marketing URLs, copyright, reviewer notes, subtitle, Utilities category, and manual release are saved. Two real Safari screenshots from `store-assets/macos/` are uploaded. Age rating is calculated 4+ with regional equivalents; content rights information is saved. Availability is configured for all 175 current storefronts on release, with EU compliance showing Active. Homepage, support, and privacy URLs pass normal HTTPS verification, including HTTP/www redirects.
+
+The Data Not Collected privacy label is published with publisher approval, and private reviewer contact fields are filled and saved in Apple’s system. The current release candidate is 1.0.0/build 3; the draft store version is aligned to 1.0.0. Before submission: finish remaining Safari QA and supported-version validation, accessibility review, and server-side build validation. Nothing has been submitted to App Review or released.

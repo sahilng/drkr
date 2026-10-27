@@ -1,5 +1,5 @@
 {
-  "channel": "development",
+  "channel": "release-candidate",
   "distribution": "mac-app-store",
   "repository": "https://github.com/sahilng/drkr",
   "homepage": "https://drkr.space/",
@@ -11,6 +11,11 @@
   "apple_team_id": "F9QX3SUK38",
   "app_store_url": null,
   "app_store_connect_id": "6827359533",
+  "availability": {
+    "scope": "worldwide",
+    "storefront_count": 175,
+    "status": "configured-on-release"
+  },
   "pricing": {
     "model": "paid-upfront",
     "base_storefront": "USA",
