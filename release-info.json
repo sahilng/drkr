@@ -27,6 +27,11 @@
   "app_store_build": {
     "version": "1.0.0",
     "build": "4",
-    "status": "ready-for-review-publisher-will-submit"
+    "status": "submitted-publisher-reported"
+  },
+  "local_candidate": {
+    "version": "1.0.0",
+    "build": "5",
+    "status": "testing-contrast-and-field-flash-fixes"
   }
 }

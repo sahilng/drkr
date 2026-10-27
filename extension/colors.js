@@ -49,8 +49,8 @@ globalThis.DrkrColors = (() => {
     }
     return [h, s, l];
   }
-  function map(value, role) {
-    const key = `${role}:${value}`;
+  function map(value, role, minimumAlpha = 0) {
+    const key = `${role}:${minimumAlpha}:${value}`;
     if (mapped.has(key)) return mapped.get(key);
     const c = parse(value);
     if (!c || c[3] === 0) return null;
@@ -67,7 +67,7 @@ globalThis.DrkrColors = (() => {
       l = s < .12 ? .88 : .76;
       s = Math.min(s, .8);
     }
-    return remember(mapped, key, `hsla(${h.toFixed(1)}, ${(s * 100).toFixed(1)}%, ${(l * 100).toFixed(1)}%, ${c[3]})`);
+    return remember(mapped, key, `hsla(${h.toFixed(1)}, ${(s * 100).toFixed(1)}%, ${(l * 100).toFixed(1)}%, ${Math.max(c[3], minimumAlpha)})`);
   }
   function gradient(value, role = "background") {
     if (!/gradient\(/i.test(value) || /url\(/i.test(value)) return null;

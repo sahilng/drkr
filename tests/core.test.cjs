@@ -52,6 +52,9 @@ test('maps light surfaces and dark text without changing transparent colors', ()
   assert.match(C.map('rgb(255, 255, 255)', 'background'), /7\.5%/);
   assert.match(C.map('rgb(0, 0, 0)', 'text'), /88\.0%/);
   assert.equal(C.map('rgba(255, 255, 255, 0)', 'background'), null);
+  assert.match(C.map('rgba(0, 0, 0, 0.4)', 'text', .7), /0\.7\)$/);
+  assert.match(C.map('rgba(0, 0, 0, 0.4)', 'text'), /0\.4\)$/);
+  assert.equal(C.map('rgba(0, 0, 0, 0)', 'text', .7), null);
   assert.equal(C.map('rgb(10, 10, 10)', 'background'), null);
   assert.equal(C.luminance([0, 0, 0]), 0);
   assert.equal(C.luminance([255, 255, 255]), 1);

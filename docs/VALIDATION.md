@@ -114,3 +114,18 @@ App Store Connect accepted homepage-on.jpg followed by homepage-off.jpg (2 of 10
 Apple finished processing build 4 (Ready to Submit in TestFlight). Attached and saved 1.0.0 (4) in the version, verified both homepage screenshots persisted, and confirmed manual release. Add for Review preflight succeeded with the single 1.0.0 (4) item Ready for Review. The publisher will inspect the screenshots and submit directly. No App Review submission has been sent by the agent.
 
 Handoff: the publisher explicitly chose to inspect and submit directly. App Store Connect is left on the draft submission with Submit for Review available. Both screenshot files were queued to open in Codex. Local checks passed as recorded above; GitHub Checks for cb27d6e was still running at handoff, while Pages deployment succeeded.
+
+
+## October 27: contrast and field flashing, build 5
+
+The publisher reported submitting build 4 directly. Subsequently created the internal TestFlight group Release checks with automatic distribution off, added build 4, and invited only the publisher's existing account after explicit approval. Apple showed that tester as Invited and build 4 Ready to Test.
+
+Inspected the reported Tech Jobs for Good page in real Safari. Reproduced light text on white job-card panels, black count text on dark surfaces, faint company metadata, and animated color changes. A card uses inline color:inherit!important, which was incorrectly treated as an immutable original-painted surface. Website CSS transitions also interpolated colors during the engine's temporary author-style measurements. Stylesheet-important rules could keep an original background while its text was recolored.
+
+Build 5 temporarily suppresses transitions only during synchronous measurements and final style resolution, then restores the author's transitions before yielding. It allows inherited/reset inline declarations that do not lock actual paint, raises generated rule specificity to keep author-important backgrounds and text paired, provides a dark first-frame fallback for new native form controls/comboboxes, and improves placeholder and partly transparent foreground contrast. Fully transparent text, original artwork, and explicit inline-important painted panels remain preserved. No permissions or network behavior changed.
+
+New regression checks cover important inherited colors and stylesheet-important backgrounds, composited 4.5:1 title/description/metadata/count contrast in the controlled fixture, 24 hover-animation frames without light intermediates, first-frame dynamic inputs, author-transition restoration, and Off restoration. Nine core tests and full startup/browser/popup/hardening/strict-CSP/contrast suites pass in Chromium and WebKit. The 5,000-card fixture remains bounded and idle-stable; scan timings are recorded in ignored build/performance-*.json and are not a battery or field-performance benchmark.
+
+Signed 1.0.0/build 5 archives successfully and verifies all 12 packaged resources and signatures. The stable local test installation is refreshed. Reloaded the actual reported page in Safari: job cards, button, count, search fields, descriptions, and company labels are readable; job cards stay dark. An explicit inline-important black count label retains a small light surface for contrast. Local visual evidence is in ignored build/safari-build5-techjobs.jpg. Real first-paint video/slow-network timing is not claimed; first-frame behavior is covered by the controlled browser test.
+
+Private build 5 upload is in progress. The App Store submission remains build 4. TestFlight availability for build 5 must be verified before asking the publisher to update.

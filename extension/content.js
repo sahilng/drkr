@@ -13,7 +13,8 @@
     ["outline-color", "border"], ["text-decoration-color", "text"],
     ["-webkit-text-fill-color", "text"], ["caret-color", "text"]
   ];
-  const base = ':root {color-scheme:dark!important;background-color:#141619!important;color:#e0e3e7!important}body{background-color:#141619!important;color:#e0e3e7!important}::selection{background:#565ba3!important;color:white!important}' + (globalThis.DrkrSiteRules?.css(location.hostname) || "");
+  const pendingControls = ':is(#drkr-override#drkr-theme,input:not([data-drkr-node]),select:not([data-drkr-node]),textarea:not([data-drkr-node]),[role="combobox"]:not([data-drkr-node])){background-color:#202328!important;color:#e0e3e7!important;color-scheme:dark!important}';
+  const base = ':root {color-scheme:dark!important;background-color:#141619!important;color:#e0e3e7!important}body{background-color:#141619!important;color:#e0e3e7!important}::selection{background:#565ba3!important;color:white!important}' + (globalThis.DrkrSiteRules?.css(location.hostname) || "") + pendingControls;
   let settings, active = false, nativeDark = false, timer, counter = 0, full = true;
   let scans = 0, lastScanMs = 0, processed = 0;
   const ownSheets = new WeakSet();
@@ -50,6 +51,32 @@
     const current = sheet(state);
     if (current) current.disabled = value;
   }
+  function transitionGuard(state, enabled) {
+    // Disabling our paint rules must not start the site's color transitions.
+    // Keep this separate from the theme, and remove it before yielding a frame.
+    if (!state.guard && enabled) {
+      const style = document.createElement("style");
+      style.setAttribute("data-drkr-sheet", "");
+      ownSheets.add(style);
+      const css = '*,*::before,*::after{transition:none!important}';
+      style.textContent = css;
+      (state.root === document ? document.documentElement : state.root).append(style);
+      let constructed = null;
+      if (!style.sheet && typeof CSSStyleSheet === "function" && "adoptedStyleSheets" in state.root) {
+        constructed = new CSSStyleSheet();
+        constructed.replaceSync(css);
+        state.root.adoptedStyleSheets = [...state.root.adoptedStyleSheets, constructed];
+      }
+      state.guard = { style, constructed };
+    }
+    const guard = state.guard;
+    if (!guard) return;
+    if (enabled) {
+      if (!guard.style.isConnected) (state.root === document ? document.documentElement : state.root).append(guard.style);
+      if (guard.constructed && !state.root.adoptedStyleSheets.includes(guard.constructed)) state.root.adoptedStyleSheets = [...state.root.adoptedStyleSheets, guard.constructed];
+    }
+    disable(guard, !enabled);
+  }
   function isNativeDark() {
     for (const el of [document.body, document.documentElement]) {
       if (!el) continue;
@@ -83,6 +110,8 @@
     for (const state of roots.values()) {
       if (state.root !== document && !state.root.host.isConnected) {
         state.style.remove();
+        state.guard?.style.remove();
+        if (state.guard?.constructed) state.root.adoptedStyleSheets = state.root.adoptedStyleSheets.filter(s => s !== state.guard.constructed);
         if (state.constructed) state.root.adoptedStyleSheets = state.root.adoptedStyleSheets.filter(s => s !== state.constructed);
         roots.delete(state.root);
         continue;
@@ -103,7 +132,7 @@
     const mask = (style.maskImage && style.maskImage !== "none") || (style.webkitMaskImage && style.webkitMaskImage !== "none");
     for (const [property, role] of properties) {
       if (!preserve && (clippedText || artwork) && role === "text") continue;
-      const value = preserve ? style.getPropertyValue(property) : C.map(style.getPropertyValue(property), mask && property === "background-color" ? "text" : role);
+      const value = preserve ? style.getPropertyValue(property) : C.map(style.getPropertyValue(property), mask && property === "background-color" ? "text" : role, role === "text" ? .7 : 0);
       if (value) result.push(`${property}:${value}!important`);
     }
     if (fallbackBackground) result.push(`background-color:${fallbackBackground}!important`);
@@ -116,7 +145,8 @@
     if (contexts.has(el)) return contexts.get(el);
     const parent = el.parentElement || el.getRootNode().host;
     const inherited = originalSurface(parent, contexts);
-    const important = ["color", "-webkit-text-fill-color", "background-color", "background-image"].some(p => el.style.getPropertyPriority(p) === "important");
+    const important = ["color", "-webkit-text-fill-color", "background-color", "background-image"].some(p =>
+      el.style.getPropertyPriority(p) === "important" && !(p === "color" || p === "-webkit-text-fill-color" ? /^(inherit|unset|currentcolor)$/i : /^(inherit|initial|unset)$/i).test(el.style.getPropertyValue(p).trim()));
     const artwork = /url\(/i.test(getComputedStyle(el).backgroundImage);
     const preserve = inherited || important || artwork;
     contexts.set(el, preserve);
@@ -162,11 +192,18 @@
       const style = getComputedStyle(el, pseudo);
       parts.push(style.content && !["none", "normal"].includes(style.content) ? declarations(style, preserve) : "");
     }
+    if (!preserve && ["INPUT", "TEXTAREA"].includes(el.tagName)) {
+      const placeholder = getComputedStyle(el, "::placeholder"), color = C.parse(placeholder.color);
+      const value = color && color[3] > 0 ? C.map(`rgb(${color.slice(0, 3).join(",")})`, "text") : null;
+      parts.push(value ? `color:${value}!important;-webkit-text-fill-color:${value}!important;opacity:.75!important` : "");
+    }
     return parts;
   }
   function groupRules(group) {
-    const selector = `[${attribute}="${group.id}"]`;
-    return group.parts.flatMap((part, index) => part ? [`${selector}${["", "::before", "::after"][index]}{${part}}`] : []);
+    // Two mutually exclusive IDs raise specificity without matching another node.
+    // This keeps stylesheet !important backgrounds and their text in sync.
+    const selector = `:is(#drkr-override#drkr-theme,[${attribute}="${group.id}"])`;
+    return group.parts.flatMap((part, index) => part ? [`${selector}${["", "::before", "::after", "::placeholder"][index]}{${part}}`] : []);
   }
   function commit(state, el, parts) {
     const signature = parts.join("\n"), old = state.nodes.get(el);
@@ -190,7 +227,7 @@
   function compact(state) {
     if (state.unused < 128) return;
     for (const [key, group] of state.groups) if (!group.count) state.groups.delete(key);
-    const css = (state.root === document ? base : ':host{color-scheme:dark!important}') + [...state.groups.values()].flatMap(groupRules).join("\n");
+    const css = (state.root === document ? base : ':host{color-scheme:dark!important}' + pendingControls) + [...state.groups.values()].flatMap(groupRules).join("\n");
     if (state.constructed) state.constructed.replaceSync(css);
     else state.style.textContent = css;
     state.unused = 0;
@@ -203,7 +240,8 @@
     const wanted = S.enabled(settings, location.hostname, media.matches);
     if (wanted) observe(document);
     const wasActive = active;
-    // Take a consistent snapshot of author styles across document/shadow roots.
+    // Take a consistent author-style snapshot without animating to light colors.
+    for (const state of roots.values()) transitionGuard(state, true);
     for (const state of roots.values()) disable(state, true);
     try {
       nativeDark = wanted && settings.respectDark && isNativeDark();
@@ -250,6 +288,7 @@
       dirty.clear();
       // Complete ALL computed-style reads before writing any marker attributes.
       // Interleaving reads and writes forces repeated document style recalculation.
+      for (const state of roots.values()) transitionGuard(state, true);
       const pending = [], contexts = new WeakMap(), icons = new WeakMap();
       for (const el of elements) {
         const parts = snapshot(el, contexts, icons);
@@ -258,7 +297,7 @@
       for (const [state, el, parts] of pending) commit(state, el, parts);
       for (const state of roots.values()) {
         if (!state.initialized) {
-          const initial = state.root === document ? base : ':host{color-scheme:dark!important}';
+          const initial = state.root === document ? base : ':host{color-scheme:dark!important}' + pendingControls;
           // Base rules precede element-specific rules of equal specificity.
           const rules = initial.match(/[^{}]+\{[^{}]*\}/g) || [];
           rules.forEach((rule, index) => sheet(state).insertRule(rule, index));
@@ -275,7 +314,13 @@
       for (const state of roots.values()) disable(state, true);
       finishStartup(true);
       console.warn("drkr could not theme this page", error);
-    } finally { scans++; lastScanMs = performance.now() - start; }
+    } finally {
+      // Resolve final themed styles while transitions are still suppressed, then
+      // restore author transitions. No temporary light state reaches a frame.
+      if (roots.size) document.documentElement.getBoundingClientRect();
+      for (const state of roots.values()) transitionGuard(state, false);
+      scans++; lastScanMs = performance.now() - start;
+    }
   }
   function schedule(all = false) {
     full ||= all;
