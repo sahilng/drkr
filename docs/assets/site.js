@@ -6,3 +6,12 @@ if (toggle) {
     toggle.textContent = dark ? 'Dark mode on' : 'Dark mode off';
   });
 }
+
+const appearanceToggle = document.getElementById('appearance-toggle');
+if (appearanceToggle) {
+  appearanceToggle.addEventListener('click', () => {
+    const dark = document.documentElement.dataset.appearance !== 'dark';
+    document.documentElement.dataset.appearance = dark ? 'dark' : 'light';
+    appearanceToggle.textContent = dark ? 'Use light appearance' : 'Use dark appearance';
+  });
+}
