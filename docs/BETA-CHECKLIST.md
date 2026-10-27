@@ -26,7 +26,7 @@ Record results; do not infer them from Chrome checks. Test the temporary extensi
 | Global Off and site override restore original colors | Passed | Publisher manually confirmed in real packaged Safari popup: Off restores light, On restores dark, Keep original restores light, Use global setting restores the global choice, all immediately. |
 | Safari private window and denied website permission | Partial | 1.0.0 stays unthemed with no drkr toolbar button under default private-window denial. Private opt-in flow remains untested. |
 | Cold navigation, slow page, refresh, back/forward | Partial | Packaged Wikipedia navigation, refresh, and Back render dark. Slow-network first paint and full back/forward coverage remain. |
-| Long page: sustained scroll and CPU | Pending | |
+| Long page: sustained scroll and CPU | Partial | Build 8: publisher reports Google Doc scrolling almost even between On/Off after Safari restart, with occasional minor stutter. Controlled editor work-count and scroll-settling regressions pass in WebKit/Chromium. Real FPS/CPU/battery benchmark and broader sustained-scroll coverage remain. |
 | Keyboard-only popup and VoiceOver labels | Pending | |
 | Minimum supported macOS / Safari versions | Pending | macOS 13+ build target; oldest supported Safari unverified |
 

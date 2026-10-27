@@ -16,7 +16,7 @@
   const pendingControls = ':is(#drkr-override#drkr-theme,input:not([data-drkr-node]),select:not([data-drkr-node]),textarea:not([data-drkr-node]),[role="combobox"]:not([data-drkr-node]),.ui.selection.dropdown:not([data-drkr-node])){background-color:#131313!important;color:#e0e0e0!important;color-scheme:dark!important}';
   const base = ':root {color-scheme:dark!important;background-color:#141619!important;color:#e0e3e7!important}body{background-color:#141619!important;color:#e0e3e7!important}::selection{background:#565ba3!important;color:white!important}' + (globalThis.DrkrSiteRules?.css(location.hostname) || "") + pendingControls;
   let settings, active = false, nativeDark = false, timer, counter = 0, full = true, framePending = false;
-  let scans = 0, lastScanMs = 0, processed = 0;
+  let scans = 0, lastScanMs = 0, processed = 0, scrollingUntil = 0;
   const ownSheets = new WeakSet();
   function reveal() { document.documentElement?.setAttribute(readyAttribute, ""); }
   const startupTimeout = setTimeout(reveal, 1500);
@@ -24,7 +24,7 @@
     if (force || document.readyState !== "loading") { clearTimeout(startupTimeout); reveal(); }
   }
   function own(node) { return node && (ownSheets.has(node) || ownSheets.has(node.parentNode)); }
-  function observe(root) { observer.observe(root, { childList: true, subtree: true, attributes: true, characterData: true }); }
+  function observe(root) { observer.observe(root, { childList: true, subtree: true, attributes: true, attributeOldValue: true, characterData: true }); }
   function rootState(root) {
     if (roots.has(root)) return roots.get(root);
     const style = document.createElement("style");
@@ -93,11 +93,9 @@
     return group;
   }
   function prepareTransitions(elements) {
-    // Read transition metadata before enabling measurement rules. Only watched
-    // transitions and dirty nodes are revisited on incremental updates.
-    const targets = new Set(elements);
-    for (const state of roots.values()) for (const el of state.transitions?.keys() || []) targets.add(el);
-    for (const el of targets) {
+    // Read author metadata only for changed nodes. Cached guards still protect
+    // other transitions while the shared theme is disabled for measurement.
+    for (const el of elements) {
       if (!el.isConnected) continue;
       const state = rootState(el.getRootNode());
       state.transitions ||= new Map();
@@ -299,13 +297,21 @@
     state.unused = 0;
     disable(state, true);
   }
-  function scan() {
+  function scan(force = false) {
     timer = null; framePending = false;
+    if (force !== true && (active || nativeDark) && scrollingUntil > performance.now()) { schedule(); return; }
     if (!settings || !document.documentElement) return;
     const start = performance.now();
     const wanted = S.enabled(settings, location.hostname, media.matches);
     if (wanted) observe(document);
     const wasActive = active;
+    // An already-dark inactive page needs only a cheap appearance check, not
+    // full transition metadata walks on every editor mutation.
+    if (wanted && !wasActive && settings.respectDark && isNativeDark()) {
+      nativeDark = true; dirty.clear(); full = true; finishStartup();
+      scans++; lastScanMs = performance.now() - start;
+      return;
+    }
     // Prepare paint-only transition protection while author metadata is intact.
     const transitionTargets = new Set();
     if (wanted) {
@@ -402,6 +408,12 @@
   }
   function schedule(all = false, urgent = false) {
     full ||= all;
+    const scrollDelay = scrollingUntil - performance.now();
+    if ((active || nativeDark) && scrollDelay > 0) {
+      cancelScan();
+      timer = setTimeout(scan, Math.ceil(scrollDelay));
+      return;
+    }
     if (timer) {
       if (!urgent || framePending) return;
       cancelScan();
@@ -409,11 +421,39 @@
     framePending = urgent;
     timer = urgent ? requestAnimationFrame(scan) : setTimeout(scan, 80);
   }
+  // Keep synchronous author-style measurement outside active scrolling. The
+  // current theme stays enabled; queued paint updates run once scrolling rests.
+  for (const event of ["wheel", "scroll", "touchmove"]) document.addEventListener(event, () => {
+    scrollingUntil = performance.now() + 140;
+    if (timer) { cancelScan(); schedule(); }
+  }, { capture: true, passive: true });
+  // Editors reposition pages/cursors while scrolling. These inline changes do
+  // not alter paint, and must not trigger a document-wide style invalidation.
+  const positioning = new Set(["transform", "translate", "rotate", "scale", "top", "right", "bottom", "left", "inset", "inset-block", "inset-inline", "inset-block-start", "inset-block-end", "inset-inline-start", "inset-inline-end", "z-index", "cursor", "will-change"]);
+  const previousInline = document.createElement("span").style, nextInline = document.createElement("span").style;
+  function positioningOnly(record) {
+    if (record.attributeName !== "style") return false;
+    previousInline.cssText = record.oldValue || "";
+    nextInline.cssText = record.target.getAttribute("style") || "";
+    for (const property of new Set([...previousInline, ...nextInline])) {
+      if (previousInline.getPropertyValue(property) === nextInline.getPropertyValue(property) && previousInline.getPropertyPriority(property) === nextInline.getPropertyPriority(property)) continue;
+      if (!positioning.has(property)) return false;
+    }
+    return true;
+  }
+  function queueInteraction(el) {
+    // A first pointer entry must not walk an entire editor/feed. Normal menus
+    // and cards keep descendant updates; large structural ancestors stay shallow.
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
+    let count = 1;
+    while (count <= 256 && walker.nextNode()) count++;
+    queue(el, count <= 256);
+  }
   const observer = new MutationObserver(records => {
     let changed = false, urgent = false;
     for (const record of records) {
       if (own(record.target)) continue;
-      if (record.type === "attributes" && [attribute, readyAttribute, transitionAttribute].includes(record.attributeName)) continue;
+      if (record.type === "attributes" && ([attribute, readyAttribute, transitionAttribute].includes(record.attributeName) || positioningOnly(record))) continue;
       if (record.type === "childList") {
         const nodes = [...record.addedNodes, ...record.removedNodes].filter(node => !own(node));
         if ([...record.removedNodes].some(node => ownSheets.has(node) && [...roots.values()].some(state => state.style === node && (state.root === document || state.root.host.isConnected)))) {
@@ -429,7 +469,7 @@
         if (nodes.some(node => node.nodeName === "STYLE" || node.nodeName === "LINK")) { full = true; urgent = true; }
         if (record.target === document.documentElement || record.target === document.body) urgent = true;
       } else if (record.type === "characterData") {
-        queue(record.target.parentElement);
+        queue(record.target.parentElement, false);
       } else {
         queue(record.target);
         if (record.target === document.documentElement || record.target === document.body) { full = true; urgent = true; }
@@ -450,24 +490,44 @@
     document.addEventListener(event, e => {
       if (!active) return;
       const target = e.composedPath()[0];
-      // Ancestor :hover/:focus-within rules can restyle a whole nested menu,
-      // including siblings of the target. Keep the scope below body/html.
-      for (let el = target, depth = 0; el && depth < 4; el = el.parentElement, depth++) {
-        if (el === document.body || el === document.documentElement) { queue(el, false); break; }
-        queue(el, true);
+      // Only ancestors actually entered/exited change :hover/:focus-within.
+      // Moving between lines must not repeatedly rescan their shared editor.
+      const other = e.relatedTarget;
+      for (let el = target, depth = 0; el && depth < 4; el = el.parentElement || el.getRootNode().host, depth++) {
+        if (el === document.body || el === document.documentElement) break;
+        if (other instanceof Node && el.contains(other)) {
+          // The focused element itself loses :focus even when focus moves into
+          // one of its children; only its :focus-within state stays unchanged.
+          if (depth === 0 && event.startsWith("focus")) queueInteraction(el);
+          break;
+        }
+        queueInteraction(el);
       }
-      schedule(false, true);
+      if (dirty.size) schedule(false, true);
     }, { capture: true, passive: true });
   }
   media.addEventListener("change", () => schedule(true, true));
+  let preferencesRevision = 0;
+  function applySettings(value) {
+    preferencesRevision++;
+    settings = S.normalize(value);
+    cancelScan(); full = true; scan(true);
+  }
+  async function refreshSettings() {
+    const revision = preferencesRevision;
+    const data = await api.storage.local.get("settings");
+    if (revision === preferencesRevision) applySettings(data.settings);
+    return { active, nativeDark };
+  }
   api.storage.onChanged.addListener((changes, area) => {
-    if (area === "local" && changes.settings) { settings = S.normalize(changes.settings.newValue); schedule(true, true); }
+    if (area === "local" && changes.settings) applySettings(changes.settings.newValue);
   });
   api.runtime.onMessage.addListener(message => {
+    if (message.type === "drkr-refresh-settings") return refreshSettings();
     if (message.type === "drkr-status") return Promise.resolve({ active, nativeDark });
     if (message.type === "drkr-diagnostics") return Promise.resolve({ scans, lastScanMs, processed, groups: [...roots.values()].reduce((n, state) => n + state.groups.size, 0) });
   });
   window.addEventListener("pageshow", event => { if (event.persisted) schedule(true, true); });
-  api.storage.local.get("settings").then(data => { settings = S.normalize(data.settings); full = true; scan(); })
+  refreshSettings()
     .catch(error => { finishStartup(true); console.warn("drkr could not load preferences", error); });
 })();

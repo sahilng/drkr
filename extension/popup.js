@@ -23,6 +23,12 @@
       else if (status && !status.active && S.enabled(settings, host, matchMedia("(prefers-color-scheme: dark)").matches)) $("site-note").textContent = "Dark mode is starting. If needed, reload this page.";
     } catch { $("site-note").textContent = "Allow drkr access to this website in Safari, then reload the page."; }
   }
+  function refreshOpenPages() {
+    const notify = id => api.tabs.sendMessage(id, { type: "drkr-refresh-settings" }).catch(() => {});
+    // Queue the active page immediately; storage events remain the other path.
+    if (tab?.id !== undefined) notify(tab.id);
+    api.tabs.query({}).then(tabs => Promise.allSettled(tabs.filter(t => t.id !== tab?.id).map(t => notify(t.id)))).catch(() => {});
+  }
   function save(update) {
     // Serialize read/modify/write so separate popup controls preserve each other.
     writes = writes.catch(() => {}).then(async () => {
@@ -31,6 +37,7 @@
       await api.storage.local.set({ settings: latest });
       settings = latest;
       render();
+      refreshOpenPages();
       $("feedback").textContent = "Saved. Open pages update automatically.";
       clearTimeout(statusTimer);
       statusTimer = setTimeout(refreshStatus, 200);

@@ -85,8 +85,8 @@ const root = path.join(__dirname, '..');
       return route.fulfill({ contentType: type, body: fs.readFileSync(file) });
     });
     await page.addInitScript(() => {
-      let saved;
-      window.browser = { storage: { local: { get: async () => ({ settings: saved }), set: async value => { saved = value.settings; window.testSaved = saved; } } }, tabs: { query: async () => [{ id: 1, url: 'https://example.com' }], sendMessage: async () => ({ active: true }) } };
+      let saved; window.testMessages = [];
+      window.browser = { storage: { local: { get: async () => ({ settings: saved }), set: async value => { saved = value.settings; window.testSaved = saved; } } }, tabs: { query: async options => options.active ? [{ id: 1, url: 'https://example.com' }] : [{ id: 1 }, { id: 2 }], sendMessage: async (id, message) => { window.testMessages.push({ id, type: message.type }); return { active: true }; } } };
     });
     await page.setViewportSize({ width: 350, height: 610 });
     await page.goto('https://popup.test/popup.html');
@@ -99,6 +99,7 @@ const root = path.join(__dirname, '..');
     await page.waitForFunction(() => window.testSaved?.respectDark === false);
     await page.selectOption('#site-mode', 'default');
     await page.waitForFunction(() => !window.testSaved?.sites['example.com']);
+    await page.waitForFunction(() => [1, 2].every(id => testMessages.filter(m => m.id === id && m.type === 'drkr-refresh-settings').length >= 4));
     await page.screenshot({ path: path.join(root, 'build/popup-preview.png'), fullPage: true });
     console.log('PASS: popup settings persist, site overrides reset, screenshot saved.');
   } finally { await browser.close(); }

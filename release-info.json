@@ -31,8 +31,8 @@
   },
   "local_candidate": {
     "version": "1.0.0",
-    "build": "7",
-    "status": "uploaded-testflight-testing"
+    "build": "8",
+    "status": "signed-tested-local-scroll-improvement-minor-stutter-remains"
   },
   "testflight": {
     "group": "Release checks",
