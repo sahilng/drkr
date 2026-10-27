@@ -40,12 +40,15 @@ class ViewController: NSViewController, WKNavigationDelegate, WKScriptMessageHan
         // Keep the bundled setup UI offline. Open support/source links in the
         // user's browser only after an explicit link activation.
         if navigationAction.navigationType == .linkActivated,
-           let url = navigationAction.request.url, url.scheme == "https",
-           (url.host == "sahilng.github.io" && url.path.hasPrefix("/drkr/")) ||
-           (url.host == "github.com" && (url.path == "/sahilng/drkr" || url.path.hasPrefix("/sahilng/drkr/"))) {
-            NSWorkspace.shared.open(url)
-            decisionHandler(.cancel)
-            return
+           let url = navigationAction.request.url, url.scheme == "https" {
+            let supportHost = ["drkr.space", "www.drkr.space"].contains(url.host ?? "")
+            let legacySupport = url.host == "sahilng.github.io" && url.path.hasPrefix("/drkr/")
+            let source = url.host == "github.com" && (url.path == "/sahilng/drkr" || url.path.hasPrefix("/sahilng/drkr/"))
+            if supportHost || legacySupport || source {
+                NSWorkspace.shared.open(url)
+                decisionHandler(.cancel)
+                return
+            }
         }
         guard navigationAction.request.url?.isFileURL == true else {
             decisionHandler(.cancel)

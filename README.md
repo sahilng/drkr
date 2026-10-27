@@ -2,7 +2,7 @@
 
 A local-first Safari dark-mode extension. Global On / System / Off, exact-hostname overrides, native dark-theme detection, preserved media, and a toolbar popup. No production dependencies, network services, analytics, or accounts. MIT licensed.
 
-[Website](https://sahilng.github.io/drkr/) · [Support](https://sahilng.github.io/drkr/support.html) · [Privacy](https://sahilng.github.io/drkr/privacy.html)
+[Website](https://drkr.space/) · [Support](https://drkr.space/support.html) · [Privacy](https://drkr.space/privacy.html)
 
 The Mac App Store version is being prepared; there is no public App Store download yet.
 

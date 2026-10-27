@@ -35,9 +35,9 @@ Record Safari/macOS version, Drkr version, URL, global/site mode, steps, and bef
 ## Public source and website
 
 - Source: https://github.com/sahilng/drkr (MIT)
-- Website: https://sahilng.github.io/drkr/
-- Support: https://sahilng.github.io/drkr/support.html
-- Privacy: https://sahilng.github.io/drkr/privacy.html
+- Website: https://drkr.space/
+- Support: https://drkr.space/support.html
+- Privacy: https://drkr.space/privacy.html
 - All three Pages URLs verified HTTP 200 over HTTPS. Private vulnerability reporting is enabled on the repository.
 - Automated checks cover Chromium and WebKit; real Safari gates below still apply.
 

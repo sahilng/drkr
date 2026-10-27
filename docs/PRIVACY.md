@@ -22,4 +22,4 @@ Choose “Use global setting” to remove a saved website override. Turn Drkr of
 
 ## Support and updates
 
-Drkr is maintained by [sahilng](https://github.com/sahilng). Questions can be raised through [GitHub Issues](https://github.com/sahilng/drkr/issues/new/choose); issues are public, so remove private data before submitting a report. The hosted version of this policy is [here](https://sahilng.github.io/drkr/privacy.html). GitHub Pages handles website connections under GitHub's privacy statement. The extension does not contact that site automatically. Review this policy whenever code or data practices change.
+Drkr is maintained by [sahilng](https://github.com/sahilng). Questions can be raised through [GitHub Issues](https://github.com/sahilng/drkr/issues/new/choose); issues are public, so remove private data before submitting a report. The hosted version of this policy is [here](https://drkr.space/privacy.html). GitHub Pages handles website connections under GitHub's privacy statement. The extension does not contact that site automatically. Review this policy whenever code or data practices change.

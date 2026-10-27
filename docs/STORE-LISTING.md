@@ -4,6 +4,10 @@ Name: Drkr — Dark Mode for Safari
 
 Subtitle: A calmer look for the web
 
+## Price
+
+Planned: **$0.99 USD, one-time purchase** in the US base storefront. Set the actual price in App Store Connect after confirming the publishing team and Paid Apps Agreement. Other storefront prices follow Apple’s configured equivalents. The MIT-licensed source remains available publicly.
+
 ## Description
 
 Drkr gives websites a softer, darker appearance in Safari on your Mac. Turn dark mode on, follow your Mac's appearance, or keep a website's original look. Set individual website preferences and let websites with existing dark themes keep their own design.
@@ -18,9 +22,9 @@ Keywords draft: dark,night,appearance,reading,theme,safari
 
 ## App Store Connect URLs
 
-- Marketing: https://sahilng.github.io/drkr/
-- Support: https://sahilng.github.io/drkr/support.html
-- Privacy policy: https://sahilng.github.io/drkr/privacy.html
+- Marketing: https://drkr.space/
+- Support: https://drkr.space/support.html
+- Privacy policy: https://drkr.space/privacy.html
 - Source: https://github.com/sahilng/drkr
 - Bundle ID to register: io.github.sahilng.drkr
 - Extension ID: io.github.sahilng.drkr.Extension
