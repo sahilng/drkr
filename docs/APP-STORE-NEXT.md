@@ -4,9 +4,9 @@ The public source and GitHub Pages website are separate from App Store distribut
 
 ## Publisher action
 
-The publisher's active individual membership has been verified in App Store Connect with Account Holder and Admin roles, Team ID `F9QX3SUK38`. This team is recorded in `release-info.json` for signing preparation. Apple Developer still displays a different membership name; the publisher has requested an information update. Confirm the correct legal seller identity with Apple before submission. Do not leave the membership or purchase another enrollment to resolve that display mismatch.
+The publisher's active individual membership has been verified in App Store Connect with Account Holder and Admin roles, Team ID `F9QX3SUK38`. The publisher explicitly approved proceeding under the existing membership/seller name, Rishav Gupta. The name is not a release blocker. This team is recorded in `release-info.json`; do not leave the membership or purchase another enrollment to change the displayed name.
 
-Signing preparation is complete on the publisher's Mac: Apple Development, Apple Distribution, and Mac Installer Distribution identities are installed in the login Keychain. The local archive succeeds with development signing and verifies both target signatures against the configured team. App IDs/provisioning, App Store distribution export/validation, and the App Store Connect app record remain to be completed. Do not commit or share private keys.
+Signing preparation is complete on the publisher's Mac: Apple Development, Apple Distribution, and Mac Installer Distribution identities are installed in the login Keychain. Both explicit bundle IDs are registered. The archive and local App Store distribution export succeed; both targets have verified Apple Distribution signatures in the exported package. The private [App Store Connect record](https://appstoreconnect.apple.com/apps/6827359533/distribution) exists as **drkr — Dark Mode for Safari**, with draft description, reviewer notes, subtitle, Utilities category, support/marketing URLs, manual release, and a $0.99 US price schedule. Server-side validation, a release build, screenshots, and the remaining metadata/QA are still required. Do not commit or share private keys.
 
 1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/). Choose individual or organization based on the publisher you intend to display. Individual enrollment displays your legal name as the seller; organization enrollment has additional verification requirements. Complete enrollment, identity verification, agreements, and payment yourself.
 2. Add the enrolled Apple account in Xcode Settings → Accounts. Obtain the Team ID. Do not share passwords, private keys, or payment details in issues or chat.
@@ -16,7 +16,7 @@ Signing preparation is complete on the publisher's Mac: Apple Development, Apple
 
 ## Paid distribution
 
-The planned US base price is **$0.99 USD as a one-time purchase**. The actual App Store price remains unset until the app record and publishing team are confirmed. The source remains MIT licensed.
+The US base price is configured as **$0.99 USD as a one-time purchase**, with Apple's equivalent storefront prices. It takes effect when the app is available for sale. The app remains in Prepare for Submission; it is not live. The source remains MIT licensed.
 
 The publishing membership's Account Holder must accept the Paid Apps Agreement and complete the required tax/banking setup in App Store Connect. The publisher handles legal agreements, identity, tax, and banking information directly. No such changes have been made by the build tooling. Review [Apple's pricing instructions](https://developer.apple.com/help/app-store-connect/manage-app-pricing/set-a-price) and [banking requirements](https://developer.apple.com/help/app-store-connect/manage-banking-information/enter-banking-information/).
 
@@ -31,9 +31,12 @@ The publishing membership's Account Holder must accept the Paid Apps Agreement a
 
 ```sh
 bash scripts/build-macos.sh --archive
+python3 scripts/export-app-store.py
 ```
 
 Open `build/Drkr.xcarchive` with Xcode Organizer, validate the signed archive, and test the distributed build. The script does not upload or submit the app.
+
+The export tool uses existing valid local distribution/installer identities for the configured team and writes `build/AppStore/Drkr.pkg`. It refuses stale archive resources or a different signing team; it does not upload, register devices, create certificates, or update provisioning. The current package is beta 0.2.0/build 2, while the draft store version is 1.0. Align versions for the final release after QA.
 
 Create the macOS record in App Store Connect. Use `STORE-LISTING.md` for the draft description, support/privacy/marketing URLs, and reviewer steps. Complete price/availability, category, age rating, screenshots, accessibility answers, export-compliance questions, and App Privacy against the actual release binary. Check the hosted URLs after deployment.
 

@@ -21,7 +21,7 @@
       const status = await api.tabs.sendMessage(tab.id, { type: "drkr-status" }, { frameId: 0 });
       if (status?.nativeDark) $("badge").textContent = "Already dark";
       else if (status && !status.active && S.enabled(settings, host, matchMedia("(prefers-color-scheme: dark)").matches)) $("site-note").textContent = "Dark mode is starting. If needed, reload this page.";
-    } catch { $("site-note").textContent = "Allow Drkr access to this website in Safari, then reload the page."; }
+    } catch { $("site-note").textContent = "Allow drkr access to this website in Safari, then reload the page."; }
   }
   function save(update) {
     // Serialize read/modify/write so separate popup controls preserve each other.
@@ -34,7 +34,7 @@
       $("feedback").textContent = "Saved. Open pages update automatically.";
       clearTimeout(statusTimer);
       statusTimer = setTimeout(refreshStatus, 200);
-    }).catch(() => { $("feedback").textContent = "Couldn’t save. Please reopen Drkr and try again."; });
+    }).catch(() => { $("feedback").textContent = "Couldn’t save. Please reopen drkr and try again."; });
   }
   async function init() {
     try {
@@ -51,7 +51,7 @@
       });
       refreshStatus();
       matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { render(); refreshStatus(); });
-    } catch { $("feedback").textContent = "Couldn’t load extension settings. Reopen Drkr to try again."; }
+    } catch { $("feedback").textContent = "Couldn’t load extension settings. Reopen drkr to try again."; }
   }
   init();
 })();

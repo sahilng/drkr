@@ -1,4 +1,4 @@
-# Drkr 0.2.0 validation — October 26, 2026
+# drkr 0.2.0 validation — October 26, 2026
 
 ## Completed
 
@@ -38,10 +38,18 @@ The planned US App Store price is $0.99 as a one-time purchase. No App Store lis
 
 ## Signing preparation — October 26, 2026
 
-App Store Connect verified Account Holder and Admin roles for team `F9QX3SUK38`; that team is now recorded in `release-info.json`. The Apple Developer membership name still needs correction or confirmation before submission. The archive script checks the app and extension signatures against the configured team after a successful archive.
+App Store Connect verified Account Holder and Admin roles for team `F9QX3SUK38`; that team is now recorded in `release-info.json`. The publisher subsequently explicitly approved proceeding with the existing membership/seller name, Rishav Gupta; it is not a release blocker. The archive script checks the app and extension signatures against the configured team after a successful archive.
 
 The initial archive preflight failed because no development signing identity was installed. Xcode disabled certificate creation, and Certificate Assistant failed before saving a CSR. With explicit publisher approval, separate signing keys were generated locally, imported into the login Keychain, and their temporary private-key files removed after successful import. Public CSRs were submitted through Apple Developer. Apple Development, Apple Distribution, and Mac Installer Distribution certificates were issued and installed, along with Apple's official WWDR G3 intermediate. All three identities validate locally. No private keys or signing requests are included in the repository or source package.
 
-`bash scripts/build-macos.sh --archive` now succeeds. The app and extension use the Apple Development identity for team `F9QX3SUK38`; deep/strict signature verification and all 12 packaged-resource checks pass. The app now declares the Utilities category, resolving Xcode's missing-category warning. This is a development-signed archive, not an App Store-validated distribution package. Distribution and installer certificates still contain the membership's old name; confirm the legal seller identity with Apple before submission.
+`bash scripts/build-macos.sh --archive` now succeeds. The app and extension use the Apple Development identity for team `F9QX3SUK38`; deep/strict signature verification and all 12 packaged-resource checks pass. The app now declares the Utilities category, resolving Xcode's missing-category warning. This is a development-signed archive, not an App Store-validated distribution package. Distribution and installer certificates contain the existing membership name approved by the publisher.
 
 The latest existing GitHub checks passed. Custom-domain HTTPS still fails hostname verification and remains pending. No app upload, App Review submission, legal agreement, banking change, or membership change was performed.
+
+## Lowercase branding and App Store preparation — October 26, 2026
+
+The publisher approved the existing membership/seller name and requested lowercase **drkr** branding. Updated the extension manifest/popup, native display names and menus, setup UI, website, and store copy while preserving bundle IDs and build paths. Nine core checks and the Chromium/WebKit website suites pass. The rebuilt signed archive verifies all 12 packaged resources.
+
+Registered `io.github.sahilng.drkr` and `io.github.sahilng.drkr.Extension` under the confirmed team. Created private App Store Connect record `6827359533` (macOS, English US, SKU `drkr-macos`). Saved the description, keywords, reviewer notes, copyright, marketing/support links, subtitle, Utilities category, and manual release setting. Configured a $0.99 USD base price with Apple's equivalent storefront prices. Saved the privacy policy URL and a Data Not Collected draft (not yet published). Availability, age rating, screenshots, accessibility answers, reviewer contact, paid distribution readiness, final version alignment, and server validation remain incomplete.
+
+The local App Store export succeeds with existing certificates. Expanded the exported package and verified current source-resource hashes, lowercase display names, and Apple Distribution signatures on both targets for team `F9QX3SUK38`. `pkgutil --check-signature` verifies the installer chain. Added `scripts/export-app-store.py` to repeat the local export without uploading or creating signing assets. This is beta 0.2.0/build 2; the draft store version defaults to 1.0. No build has been uploaded, submitted for review, or released.

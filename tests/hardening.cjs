@@ -9,7 +9,7 @@ const root = path.join(__dirname, '..');
     const page = await browser.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    page.on('console', message => { if (message.text().startsWith('Drkr could not')) errors.push(message.text()); });
+    page.on('console', message => { if (message.text().startsWith('drkr could not')) errors.push(message.text()); });
     await page.setContent(`<!doctype html><html><head><style id="author">
       body{background:#fff;color:#222;font:16px system-ui}.card{background:#f1f3f6;color:#222;padding:10px;border:1px solid #ddd}
       #gradient{background:linear-gradient(120deg,#fff 20%,#ddd 80%);color:#222}

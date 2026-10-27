@@ -1,4 +1,4 @@
-# Drkr · macOS beta 0.2.0
+# drkr · macOS beta 0.2.0
 
 A local-first Safari dark-mode extension. Global On / System / Off, exact-hostname overrides, native dark-theme detection, preserved media, and a toolbar popup. No production dependencies, network services, analytics, or accounts. MIT licensed.
 
@@ -10,7 +10,7 @@ The Mac App Store version is being prepared; there is no public App Store downlo
 
 1. Safari → Settings → Advanced: enable developer features if needed.
 2. Settings → Developer → Add Temporary Extension: choose this repository's **extension/** folder. Authorize unsigned extensions if Safari asks.
-3. Enable Drkr and allow access to your chosen websites. Private-browsing access is optional.
+3. Enable drkr and allow access to your chosen websites. Private-browsing access is optional.
 4. Reload existing webpages. Use the moon toolbar icon to choose appearance.
 5. After changing source files, use **Reload** on the temporary extension in Safari Settings, then reload webpages.
 

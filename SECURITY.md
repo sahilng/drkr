@@ -1,6 +1,6 @@
 # Security reporting
 
-Drkr handles webpage appearance locally and does not require credentials or a backend.
+drkr handles webpage appearance locally and does not require credentials or a backend.
 
 If you discover a vulnerability, use this repository's **Security → Report a vulnerability** button when available. Do not post passwords, tokens, private browsing content, or an exploitable vulnerability in a public issue.
 

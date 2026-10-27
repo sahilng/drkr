@@ -10,12 +10,13 @@
   "license": "MIT",
   "apple_team_id": "F9QX3SUK38",
   "app_store_url": null,
+  "app_store_connect_id": "6827359533",
   "pricing": {
     "model": "paid-upfront",
     "base_storefront": "USA",
     "currency": "USD",
     "price": "0.99",
-    "status": "planned"
+    "status": "configured-in-app-store-connect-not-live"
   },
-  "publisher_team_status": "account-holder-verified-legal-name-update-pending"
+  "publisher_team_status": "account-holder-verified-existing-seller-name-approved"
 }

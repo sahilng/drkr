@@ -1,6 +1,6 @@
-# Contributing to Drkr
+# Contributing to drkr
 
-Drkr is MIT licensed. Small, reviewable changes with a clear reproduction are welcome.
+drkr is MIT licensed. Small, reviewable changes with a clear reproduction are welcome.
 
 ## Setup
 
@@ -10,7 +10,7 @@ The extension itself has no runtime dependencies. Never add analytics, credentia
 
 ## Safari
 
-Load `extension/` as a temporary extension in Safari's Developer settings. Reload the extension and webpage after changing sources. Test On / System / Off, site overrides, native dark themes, private browsing, form values, and restoring original appearance. Keep only one Drkr copy enabled while testing.
+Load `extension/` as a temporary extension in Safari's Developer settings. Reload the extension and webpage after changing sources. Test On / System / Off, site overrides, native dark themes, private browsing, form values, and restoring original appearance. Keep only one drkr copy enabled while testing.
 
 Run `bash scripts/build-macos.sh` to build the checked-in native project. Keep manifest, package, and native version numbers aligned. The archive path requires an Apple Developer team and is separate from the local ad-hoc build.
 

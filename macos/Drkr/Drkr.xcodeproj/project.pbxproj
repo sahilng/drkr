@@ -445,7 +445,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Drkr Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Drkr Extension";
+				INFOPLIST_KEY_CFBundleDisplayName = "drkr Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -479,7 +479,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Drkr Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Drkr Extension";
+				INFOPLIST_KEY_CFBundleDisplayName = "drkr Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -517,7 +517,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Drkr/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Drkr;
+				INFOPLIST_KEY_CFBundleDisplayName = drkr;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -559,7 +559,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Drkr/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Drkr;
+				INFOPLIST_KEY_CFBundleDisplayName = drkr;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;

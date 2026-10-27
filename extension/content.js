@@ -253,7 +253,7 @@
       active = false;
       for (const state of roots.values()) state.style.disabled = true;
       finishStartup(true);
-      console.warn("Drkr could not theme this page", error);
+      console.warn("drkr could not theme this page", error);
     } finally { scans++; lastScanMs = performance.now() - start; }
   }
   function schedule(all = false) {
@@ -316,5 +316,5 @@
     if (message.type === "drkr-diagnostics") return Promise.resolve({ scans, lastScanMs, processed, groups: [...roots.values()].reduce((n, state) => n + state.groups.size, 0) });
   });
   api.storage.local.get("settings").then(data => { settings = S.normalize(data.settings); full = true; scan(); })
-    .catch(error => { finishStartup(true); console.warn("Drkr could not load preferences", error); });
+    .catch(error => { finishStartup(true); console.warn("drkr could not load preferences", error); });
 })();

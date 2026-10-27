@@ -1,4 +1,4 @@
-# Drkr 0.2.0 beta gate
+# drkr 0.2.0 beta gate
 
 ## Implemented
 
@@ -30,7 +30,7 @@ Record results; do not infer them from Chrome checks. Test the temporary extensi
 | Keyboard-only popup and VoiceOver labels | Pending | |
 | Minimum supported macOS / Safari versions | Pending | macOS 13+ build target; oldest supported Safari unverified |
 
-Record Safari/macOS version, Drkr version, URL, global/site mode, steps, and before/after screenshots for visual bugs. Do not include private messages or account data.
+Record Safari/macOS version, drkr version, URL, global/site mode, steps, and before/after screenshots for visual bugs. Do not include private messages or account data.
 
 ## Public source and website
 

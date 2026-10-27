@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Drkr \u2014 Dark Mode for Safari",
-  "short_name": "Drkr",
+  "name": "drkr \u2014 Dark Mode for Safari",
+  "short_name": "drkr",
   "version": "0.2.0",
   "description": "Comfortable dark mode for the web. Follow your system, or choose per website. No tracking.",
   "permissions": [
@@ -14,7 +14,7 @@
     "128": "icons/icon-128.png"
   },
   "action": {
-    "default_title": "Drkr",
+    "default_title": "drkr",
     "default_popup": "popup.html",
     "default_icon": {
       "48": "icons/icon-48.png",

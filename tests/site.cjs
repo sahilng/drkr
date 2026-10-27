@@ -18,7 +18,7 @@ const root = path.join(__dirname, '..');
       return route.fulfill({ contentType, body: fs.readFileSync(file) });
     });
     await page.goto('https://site.test/drkr/');
-    assert.equal(await page.title(), 'Drkr — A calmer look for Safari');
+    assert.equal(await page.title(), 'drkr — A calmer look for Safari');
     assert.equal(await page.locator('#demo-toggle').getAttribute('aria-pressed'), 'true');
     await page.locator('#demo-toggle').click();
     assert.equal(await page.locator('#demo-toggle').getAttribute('aria-pressed'), 'false');
