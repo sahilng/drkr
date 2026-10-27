@@ -13,7 +13,7 @@
     ["outline-color", "border"], ["text-decoration-color", "text"],
     ["-webkit-text-fill-color", "text"], ["caret-color", "text"]
   ];
-  const pendingControls = ':is(#drkr-override#drkr-theme,input:not([data-drkr-node]),select:not([data-drkr-node]),textarea:not([data-drkr-node]),[role="combobox"]:not([data-drkr-node])){background-color:#202328!important;color:#e0e3e7!important;color-scheme:dark!important}';
+  const pendingControls = ':is(#drkr-override#drkr-theme,input:not([data-drkr-node]),select:not([data-drkr-node]),textarea:not([data-drkr-node]),[role="combobox"]:not([data-drkr-node]),.ui.selection.dropdown:not([data-drkr-node])){background-color:#131313!important;color:#e0e0e0!important;color-scheme:dark!important}';
   const base = ':root {color-scheme:dark!important;background-color:#141619!important;color:#e0e3e7!important}body{background-color:#141619!important;color:#e0e3e7!important}::selection{background:#565ba3!important;color:white!important}' + (globalThis.DrkrSiteRules?.css(location.hostname) || "") + pendingControls;
   let settings, active = false, nativeDark = false, timer, counter = 0, full = true, framePending = false;
   let scans = 0, lastScanMs = 0, processed = 0;
@@ -64,7 +64,7 @@
     return parts;
   }
   function paintProperty(property) {
-    return /color$/.test(property) || ["fill", "stroke", "box-shadow", "text-shadow", "background-image"].includes(property);
+    return /(?:color|shadow)$/.test(property) || ["fill", "stroke", "background", "background-image"].includes(property);
   }
   function transitionGroup(style) {
     const properties = cssList(style.transitionProperty);
@@ -76,7 +76,9 @@
     nonPaintProperties ||= Array.from(style).filter(p => !paintProperty(p) && !p.startsWith("transition"));
     const entries = [];
     properties.forEach((p, i) => {
-      for (const property of p === "all" ? nonPaintProperties : paintProperty(p) || p === "none" ? [] : [p]) {
+      // A background shorthand also includes position/size animations. Keep
+      // those while suppressing its color/image interpolation during reads.
+      for (const property of p === "all" ? nonPaintProperties : p === "background" ? ["background-position", "background-size"] : paintProperty(p) || p === "none" ? [] : [p]) {
         entries.push([property, durations[i % durations.length], delays[i % delays.length], timing[i % timing.length], behavior[i % behavior.length]]);
       }
     });

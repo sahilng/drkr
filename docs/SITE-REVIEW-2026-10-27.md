@@ -29,3 +29,7 @@ Reviewed in real Safari 26.6.2 on macOS 26.6.2 with the signed local 1.0.0/build
 ## Remaining scope
 
 Dark image logos and map tiles are intentionally not globally inverted. Selective artwork treatment needs separate work. Live hover timing on JLH and first-paint recording on Krugman remain follow-up checks on a human-driven Safari session. Older supported Safari versions, exhaustive authenticated workflows, VoiceOver, and all network/load conditions were not covered by this sweep. Reload already-open tabs after an extension update so they receive the new content script.
+
+## Later follow-up: Tech Jobs for Good
+
+On the publisher's open Tech Jobs for Good job-list page, reproduced pale button backgrounds and custom dropdown reload flashes after the broad sweep. Build 7 adds background-shorthand/vendor-shadow protection and matches the custom selection fallback to the settled field paint. Both full browser suites pass; the publisher confirmed readable buttons after pointer movement and no visible dropdown flash after the final local update. See VALIDATION.md for the regression evidence and distribution status.

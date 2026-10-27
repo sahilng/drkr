@@ -31,8 +31,8 @@
   },
   "local_candidate": {
     "version": "1.0.0",
-    "build": "6",
-    "status": "uploaded-processing-not-distributed"
+    "build": "7",
+    "status": "signed-tested-publisher-confirmed-local-only"
   },
   "testflight": {
     "group": "Release checks",
