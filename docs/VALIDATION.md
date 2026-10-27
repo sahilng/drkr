@@ -78,3 +78,19 @@ Both original-content screenshots are uploaded to the private macOS draft and pr
 GitHub's TLS certificate for drkr.space/www.drkr.space is approved and HTTPS enforcement is enabled. Homepage, support, and privacy return HTTP 200 using normal certificate verification; HTTP and www redirect to the canonical HTTPS apex. Earlier pending-TLS notes are resolved.
 
 Server-side build validation is being checked separately. No App Review submission or public release has occurred. Broader authenticated-site, full keyboard/VoiceOver, private-window, sustained-performance, and oldest-supported-OS coverage remain incomplete and must not be represented as passed.
+
+
+### Apple validation and provisioning
+
+Apple's validation-only workflow accepted 1.0.0/build 3. It returned a TestFlight eligibility warning because the main app had no provisioning profile. Created Mac App Store profiles for both registered bundle IDs using the existing approved Apple Distribution certificate. Verified their team, explicit App IDs, platform, certificate, expiration, and distribution type; installed them for Xcode and kept local copies only in the ignored signing folder.
+
+The profiled export succeeds. Expanded its actual installer payload and verified both embedded profiles, both signatures, 1.0.0/build 3, lowercase native names, encryption declaration, and all 12 resource hashes. The export helper now supports explicit validation/private-upload modes and verifies matching profiles before either operation. Private upload/processing status is recorded after completion below; no App Review submission is performed by this tooling.
+
+
+### Private upload and 1.0.0 Safari smoke test
+
+Xcode reports Upload succeeded for the profiled 1.0.0/build 3 package. No TestFlight provisioning warning was returned during this upload. Apple is processing the package; TestFlight did not yet list a processed build at the last check. This is an upload, not an App Review submission or public release.
+
+Refreshed the stable local signed copy to the exact 1.0.0 archive and verified its 12 resources, signatures, native lowercase name, setup version, and enabled status. Re-ran the real Safari fixture: 7/7 checks pass. The page select changes from One to Two, textarea editing works, and a new card renders. The original reading-page smoke also preserves input and themes dynamically added content. A private test window keeps the local page light and omits the drkr toolbar control under default denial; private opt-in remains untested. Closed the private test window. Additional QA evidence stays in the ignored build folder, separate from the two store screenshot files.
+
+Apple processing completed: TestFlight lists 1.0.0/build 3 as Ready to Submit. Selected that build in the macOS 1.0.0 version draft, saved, and verified the attached build remains visible with Save disabled. The version remains Prepare for Submission. No App Review submission or public release has occurred. The owned loopback fixture server was stopped after testing.

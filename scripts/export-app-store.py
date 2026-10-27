@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Export an existing archive locally; never upload or create signing assets."""
+"""Export an archive, or explicitly validate/upload it; never submit for review."""
+import argparse
+import datetime
+import hashlib
 import json
 import plistlib
 import re
@@ -7,6 +10,13 @@ import subprocess
 from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
+parser = argparse.ArgumentParser(description=__doc__)
+mode = parser.add_mutually_exclusive_group()
+mode.add_argument('--validate', action='store_true',
+                  help='Upload for Apple validation only; do not submit for review.')
+mode.add_argument('--upload', action='store_true',
+                  help='Upload privately to App Store Connect; do not submit for review.')
+args = parser.parse_args()
 release = json.loads((root / 'release-info.json').read_text())
 team = release.get('apple_team_id')
 if not team or not re.fullmatch(r'[A-Z0-9]{10}', team):
@@ -26,13 +36,34 @@ def identity(prefix):
     if len(matches) != 1:
         raise SystemExit(f'Expected one valid {prefix} identity for {team}; found {len(matches)}.')
     return matches[0][0]
-options = {'method': 'app-store-connect', 'destination': 'export', 'teamID': team,
-           'signingStyle': 'manual', 'signingCertificate': identity('Apple Distribution:'),
+signing_identity = identity('Apple Distribution:')
+profiles = {}
+for bundle_key, filename in [('bundle_identifier', 'drkr-app-store.provisionprofile'),
+                             ('extension_bundle_identifier', 'drkr-extension-app-store.provisionprofile')]:
+    path = root / 'build/signing' / filename
+    if not path.is_file():
+        raise SystemExit(f'Download and install the Mac App Store profile first: {path}')
+    profile = plistlib.loads(subprocess.check_output(
+        ['security', 'cms', '-D', '-i', str(path)], stderr=subprocess.DEVNULL))
+    if (profile.get('TeamIdentifier') != [team]
+            or 'OSX' not in profile.get('Platform', [])
+            or profile['Entitlements'].get('com.apple.application-identifier') != f'{team}.{release[bundle_key]}'
+            or 'ProvisionedDevices' in profile or profile.get('ProvisionsAllDevices')
+            or not any(hashlib.sha1(cert).hexdigest().upper() == signing_identity
+                       for cert in profile.get('DeveloperCertificates', []))
+            or profile['ExpirationDate'].replace(tzinfo=datetime.timezone.utc) <= datetime.datetime.now(datetime.timezone.utc)):
+        raise SystemExit(f'Profile does not match the app, team, certificate, or distribution requirements: {path}')
+    profiles[release[bundle_key]] = profile['UUID']
+options = {'method': 'validation' if args.validate else 'app-store-connect',
+           'destination': 'upload' if args.validate or args.upload else 'export', 'teamID': team,
+           'signingStyle': 'manual', 'signingCertificate': signing_identity,
+           'provisioningProfiles': profiles,
            'installerSigningCertificate': identity('3rd Party Mac Developer Installer:'),
            'manageAppVersionAndBuildNumber': False}
-options_path = root / 'build/AppStoreExportOptions.plist'
+options_path = root / ('build/AppStoreValidationOptions.plist' if args.validate else 'build/AppStoreExportOptions.plist')
 options_path.write_bytes(plistlib.dumps(options))
 subprocess.run(['xcodebuild', '-exportArchive', '-archivePath', str(archive),
-                '-exportPath', str(root / 'build/AppStore'),
+                '-exportPath', str(root / ('build/Validation' if args.validate else 'build/AppStore')),
                 '-exportOptionsPlist', str(options_path)], check=True)
-subprocess.run(['pkgutil', '--check-signature', str(root / 'build/AppStore/Drkr.pkg')], check=True)
+if not args.validate and not args.upload:
+    subprocess.run(['pkgutil', '--check-signature', str(root / 'build/AppStore/Drkr.pkg')], check=True)

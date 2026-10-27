@@ -23,5 +23,10 @@
     "price": "0.99",
     "status": "configured-in-app-store-connect-not-live"
   },
-  "publisher_team_status": "account-holder-verified-existing-seller-name-approved"
+  "publisher_team_status": "account-holder-verified-existing-seller-name-approved",
+  "app_store_build": {
+    "version": "1.0.0",
+    "build": "3",
+    "status": "processed-attached-to-draft"
+  }
 }

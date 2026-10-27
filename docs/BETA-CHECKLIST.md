@@ -21,10 +21,10 @@ Record results; do not infer them from Chrome checks. Test the temporary extensi
 | Gmail list, composer, search, dialogs | Pending | |
 | Wikipedia article, table, images | Partial | Signed packaged extension tested in Safari 26.6.2: readable article/table, preserved Moon photo, visible wordmark. Some original artwork icons can still have low contrast. |
 | News article with sticky header and lazy content | Pending | |
-| Forms: input, select, textarea, disabled, focus | Partial | Packaged Safari input value preserved; button adds a dynamically themed card. Select renders legibly; full select/textarea/disabled/focus interaction audit remains. |
+| Forms: input, select, textarea, disabled, focus | Partial | Packaged Safari input value preserved; button adds a dynamically themed card. Select changes and textarea editing also pass in the 1.0.0 Safari fixture; disabled/focus audit remains. |
 | Native dark theme and live OS appearance changes | Pending | |
 | Global Off and site override restore original colors | Passed | Publisher manually confirmed in real packaged Safari popup: Off restores light, On restores dark, Keep original restores light, Use global setting restores the global choice, all immediately. |
-| Safari private window and denied website permission | Pending | |
+| Safari private window and denied website permission | Partial | 1.0.0 stays unthemed with no drkr toolbar button under default private-window denial. Private opt-in flow remains untested. |
 | Cold navigation, slow page, refresh, back/forward | Partial | Packaged Wikipedia navigation, refresh, and Back render dark. Slow-network first paint and full back/forward coverage remain. |
 | Long page: sustained scroll and CPU | Pending | |
 | Keyboard-only popup and VoiceOver labels | Pending | |
