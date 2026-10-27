@@ -27,6 +27,6 @@
   "app_store_build": {
     "version": "1.0.0",
     "build": "3",
-    "status": "processed-attached-to-draft"
+    "status": "ready-for-review-awaiting-publisher-submission-approval"
   }
 }

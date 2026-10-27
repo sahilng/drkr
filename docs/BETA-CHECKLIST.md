@@ -44,9 +44,9 @@ Record Safari/macOS version, drkr version, URL, global/site mode, steps, and bef
 ## Public release still requires
 
 - Complete the Safari matrix and resolve severe readability, navigation, and performance defects.
-- Publisher team and explicit bundle identifiers are configured. Signed archive and local App Store export pass; server-side validation and distributed-build testing remain.
+- Publisher team and explicit bundle identifiers are configured. Signed archive, local App Store export, Apple validation, processing, and submission preflight pass. Distributed-build testing was skipped at the publisher’s direction.
 - Support and privacy pages are live on GitHub Pages. Confirm publisher identity and App Store privacy answers against the release binary (current code transmits no data).
-- Real Safari screenshot candidates are captured locally at 2880×1800 using original demonstration content. Category and calculated 4+ age rating are set. Finish availability, accessibility answers, reviewer contact, and final screenshot review.
+- Real Safari screenshot candidates are captured locally at 2880×1800 using original demonstration content. Category and calculated 4+ age rating are set. Worldwide availability, reviewer contact, and screenshots are saved. No unverified accessibility label is claimed.
 - If shipping outside the Mac App Store, sign and notarize using Developer ID instead.
 
 The release candidate is macOS-only. Do not advertise iPhone/iPad support. Closed shadow roots, distant selector dependencies such as :has(), late shadow roots attached without observable DOM changes, CSS animations, and canvas artwork remain compatibility limits. Original artwork and inline-important panels may remain light to preserve readability.
