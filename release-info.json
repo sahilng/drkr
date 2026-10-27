@@ -32,7 +32,7 @@
   "local_candidate": {
     "version": "1.0.0",
     "build": "6",
-    "status": "signed-tested-uploading"
+    "status": "uploaded-processing-not-distributed"
   },
   "testflight": {
     "group": "Release checks",
