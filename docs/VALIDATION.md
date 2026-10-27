@@ -110,3 +110,7 @@ Strict-policy document/shadow-root, Off/On, preserved input, removed-marker reco
 Xcode reports build 4 Upload succeeded / EXPORT SUCCEEDED. Apple processing and version attachment must be checked before final review submission. Build 3 was removed from the unsubmitted review draft so screenshot and build changes can be saved. No App Review submission or public release has occurred.
 
 App Store Connect accepted homepage-on.jpg followed by homepage-off.jpg (2 of 10 screenshots) and Save is disabled after persistence. The previous localhost screenshots are removed from the version. Detached build 3 and saved the version while waiting for build 4.
+
+Apple finished processing build 4 (Ready to Submit in TestFlight). Attached and saved 1.0.0 (4) in the version, verified both homepage screenshots persisted, and confirmed manual release. Add for Review preflight succeeded with the single 1.0.0 (4) item Ready for Review. The publisher will inspect the screenshots and submit directly. No App Review submission has been sent by the agent.
+
+Handoff: the publisher explicitly chose to inspect and submit directly. App Store Connect is left on the draft submission with Submit for Review available. Both screenshot files were queued to open in Codex. Local checks passed as recorded above; GitHub Checks for cb27d6e was still running at handoff, while Pages deployment succeeded.
