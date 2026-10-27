@@ -32,10 +32,23 @@
     ownSheets.add(style);
     (root === document ? document.documentElement : root).append(style);
     style.disabled = true;
-    const state = { root, style, nodes: new Map(), groups: new Map(), unused: 0 };
+    // Safari can reject DOM style elements under a page's style-src policy.
+    // A constructed sheet keeps extension styling local without changing CSP.
+    let constructed = null;
+    if (!style.sheet && typeof CSSStyleSheet === "function" && "adoptedStyleSheets" in root) {
+      constructed = new CSSStyleSheet();
+      constructed.disabled = true;
+      root.adoptedStyleSheets = [...root.adoptedStyleSheets, constructed];
+    }
+    const state = { root, style, constructed, nodes: new Map(), groups: new Map(), unused: 0 };
     roots.set(root, state);
     if (root !== document) observe(root);
     return state;
+  }
+  function sheet(state) { return state.constructed || state.style.sheet; }
+  function disable(state, value) {
+    const current = sheet(state);
+    if (current) current.disabled = value;
   }
   function isNativeDark() {
     for (const el of [document.body, document.documentElement]) {
@@ -70,6 +83,7 @@
     for (const state of roots.values()) {
       if (state.root !== document && !state.root.host.isConnected) {
         state.style.remove();
+        if (state.constructed) state.root.adoptedStyleSheets = state.root.adoptedStyleSheets.filter(s => s !== state.constructed);
         roots.delete(state.root);
         continue;
       }
@@ -167,7 +181,7 @@
     if (!group) {
       group = { id: String(++counter), signature, parts, count: 0 };
       state.groups.set(signature, group);
-      for (const rule of groupRules(group)) state.style.sheet.insertRule(rule, state.style.sheet.cssRules.length);
+      for (const rule of groupRules(group)) sheet(state).insertRule(rule, sheet(state).cssRules.length);
     } else if (!group.count) state.unused--;
     group.count++;
     state.nodes.set(el, group);
@@ -176,9 +190,11 @@
   function compact(state) {
     if (state.unused < 128) return;
     for (const [key, group] of state.groups) if (!group.count) state.groups.delete(key);
-    state.style.textContent = (state.root === document ? base : ':host{color-scheme:dark!important}') + [...state.groups.values()].flatMap(groupRules).join("\n");
+    const css = (state.root === document ? base : ':host{color-scheme:dark!important}') + [...state.groups.values()].flatMap(groupRules).join("\n");
+    if (state.constructed) state.constructed.replaceSync(css);
+    else state.style.textContent = css;
     state.unused = 0;
-    state.style.disabled = true;
+    disable(state, true);
   }
   function scan() {
     timer = null;
@@ -188,7 +204,7 @@
     if (wanted) observe(document);
     const wasActive = active;
     // Take a consistent snapshot of author styles across document/shadow roots.
-    for (const state of roots.values()) state.style.disabled = true;
+    for (const state of roots.values()) disable(state, true);
     try {
       nativeDark = wanted && settings.respectDark && isNativeDark();
       active = wanted && !nativeDark;
@@ -201,11 +217,16 @@
       }
       rootState(document);
       for (const state of roots.values()) {
+        if (state.constructed && !state.root.adoptedStyleSheets.includes(state.constructed)) {
+          state.root.adoptedStyleSheets = [...state.root.adoptedStyleSheets, state.constructed];
+          full = true;
+        }
         if (state.style.isConnected) continue;
         // A page can replace its entire root or remove injected style nodes.
         // CSSOM-only rules disappear on detachment, so regenerate their groups.
         (state.root === document ? document.documentElement : state.root).append(state.style);
-        state.style.disabled = true;
+        disable(state, true);
+        if (state.constructed) state.constructed.replaceSync("");
         state.nodes.clear(); state.groups.clear(); state.unused = 0; state.initialized = false;
         full = true;
       }
@@ -240,18 +261,18 @@
           const initial = state.root === document ? base : ':host{color-scheme:dark!important}';
           // Base rules precede element-specific rules of equal specificity.
           const rules = initial.match(/[^{}]+\{[^{}]*\}/g) || [];
-          rules.forEach((rule, index) => state.style.sheet.insertRule(rule, index));
+          rules.forEach((rule, index) => sheet(state).insertRule(rule, index));
           state.initialized = true;
         }
         compact(state);
-        state.style.disabled = false;
+        disable(state, false);
       }
       processed = pending.length;
       finishStartup();
     } catch (error) {
       // An unsupported page must stay usable, even if theme generation fails.
       active = false;
-      for (const state of roots.values()) state.style.disabled = true;
+      for (const state of roots.values()) disable(state, true);
       finishStartup(true);
       console.warn("drkr could not theme this page", error);
     } finally { scans++; lastScanMs = performance.now() - start; }

@@ -98,3 +98,15 @@ Apple processing completed: TestFlight lists 1.0.0/build 3 as Ready to Submit. S
 The publisher chose to prioritize App Review over optional TestFlight distribution and further local testing. No TestFlight group or invitation was created. Apple’s Add for Review preflight succeeded: macOS 1.0.0/build 3 is Ready for Review, with one item in Draft Submissions and Submit for Review available. Manual release remains selected. Final publisher approval to send the submission is pending. Remaining QA limits above are unchanged; they are not represented as passed.
 
 Submission held at the publisher’s request to replace local-host screenshots with matching On/Off views of a public demo at drkr.space/demo.html. No final review submission was sent.
+
+### Homepage comparison and build 4
+
+At the publisher’s request, added a native light appearance option to the public homepage for matching real On/Off screenshots. Website navigation, responsive desktop/mobile layout, keyboard demo controls, image loading, and no third-party requests pass WebKit checks; GitHub Pages deployment and CI passed at 1e2c7a3.
+
+This caught a real Safari failure: the homepage’s strict style-src policy rejected the generated DOM style element, leaving its sheet null. The console showed the policy rejection and insertRule TypeError. Added a constructed-stylesheet fallback when Safari rejects a DOM sheet, including Off restoration, shadow-root cleanup, marker recovery, and normal native-dark detection. The page policy is unchanged; no extension permissions were added. Constructed sheets are available in Safari 16.4+; older Safari still uses the existing DOM path and may leave strict-policy pages original.
+
+Strict-policy document/shadow-root, Off/On, preserved input, removed-marker recovery, and native-dark tests pass in both Chromium and WebKit. Existing WebKit browser, popup, startup, restoration, dynamic-content, and 5,000-card hardening suites pass, as do nine core tests. Signed 1.0.0/build 4 archive verifies all 12 packaged resources and signatures. Refreshed the stable Safari test installation and confirmed only that drkr registration remains. Real Safari now themes https://drkr.space/ dark with global On and shows the normal popup status, replacing the previous failure. The verified On capture uses build 4; the original-light Off capture uses build 3 with identical visible popup/page UI. Screenshots are unedited 2880×1800 Safari window captures at 85% zoom.
+
+Xcode reports build 4 Upload succeeded / EXPORT SUCCEEDED. Apple processing and version attachment must be checked before final review submission. Build 3 was removed from the unsubmitted review draft so screenshot and build changes can be saved. No App Review submission or public release has occurred.
+
+App Store Connect accepted homepage-on.jpg followed by homepage-off.jpg (2 of 10 screenshots) and Save is disabled after persistence. The previous localhost screenshots are removed from the version. Detached build 3 and saved the version while waiting for build 4.
