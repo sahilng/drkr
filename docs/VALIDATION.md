@@ -34,4 +34,10 @@ The public MIT repository and GitHub Pages site are deployed. Homepage, support,
 
 All four GitHub Pages A records and the www CNAME were saved in Namecheap and verified against authoritative/public DNS. GitHub serves the site with HTTP 200 when addressed directly for drkr.space. Some resolvers still return the prior parking address, and the custom-domain TLS certificate was not yet issued at the last check. Do not treat the new HTTPS URLs as validated until normal certificate verification succeeds.
 
-The planned US App Store price is $0.99 as a one-time purchase. No App Store listing, signing team, agreement, bank, or payout configuration has been changed. Distribution archives require a confirmed publisher-controlled Team ID in release-info.json.
+The planned US App Store price is $0.99 as a one-time purchase. No App Store listing, agreement, bank, or payout configuration has been changed.
+
+## Signing preparation — October 26, 2026
+
+App Store Connect verified Account Holder and Admin roles for team `F9QX3SUK38`; that team is now recorded in `release-info.json`. The Apple Developer membership name still needs correction or confirmation before submission. The archive script checks the app and extension signatures against the configured team after a successful archive.
+
+The archive preflight reached both native targets but failed because no Mac Development signing certificate/private key is installed. Xcode's certificate manager showed no certificates and disabled certificate creation. The Apple Developer website does allow the Apple Development certificate workflow and reaches the CSR upload step, so the observed creation restriction is in Xcode; its cause is not established. No signing credential or distribution archive was created. The latest existing GitHub checks passed; custom-domain HTTPS still fails hostname verification and remains pending.

@@ -8,7 +8,7 @@
   "bundle_identifier": "io.github.sahilng.drkr",
   "extension_bundle_identifier": "io.github.sahilng.drkr.Extension",
   "license": "MIT",
-  "apple_team_id": null,
+  "apple_team_id": "F9QX3SUK38",
   "app_store_url": null,
   "pricing": {
     "model": "paid-upfront",
@@ -17,5 +17,5 @@
     "price": "0.99",
     "status": "planned"
   },
-  "publisher_team_status": "awaiting-account-holder-confirmation"
+  "publisher_team_status": "account-holder-verified-legal-name-update-pending"
 }

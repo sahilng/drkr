@@ -22,6 +22,15 @@ if [[ "${1:-}" == "--archive" ]]; then
     -derivedDataPath "$ROOT/build/DerivedData" \
     DEVELOPMENT_TEAM="$PUBLISHER_TEAM" CODE_SIGN_STYLE=Automatic archive
   python3 "$ROOT/scripts/check-built-app.py" "$ROOT/build/Drkr.xcarchive/Products/Applications/Drkr.app"
+  APP="$ROOT/build/Drkr.xcarchive/Products/Applications/Drkr.app"
+  /usr/bin/codesign --verify --deep --strict "$APP"
+  for SIGNED_BUNDLE in "$APP" "$APP/Contents/PlugIns/Drkr Extension.appex"; do
+    SIGNED_TEAM="$(/usr/bin/codesign -dv "$SIGNED_BUNDLE" 2>&1 | sed -n 's/^TeamIdentifier=//p')"
+    if [[ "$SIGNED_TEAM" != "$PUBLISHER_TEAM" ]]; then
+      echo "Archive signature does not match the confirmed publisher team: $SIGNED_BUNDLE"
+      exit 1
+    fi
+  done
   echo "Archive: $ROOT/build/Drkr.xcarchive (validate and distribute in Xcode Organizer)."
 elif [[ $# -eq 0 ]]; then
   xcodebuild -project "$PROJECT" -scheme Drkr -configuration Debug \
