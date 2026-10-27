@@ -32,12 +32,12 @@
   "local_candidate": {
     "version": "1.0.0",
     "build": "7",
-    "status": "signed-tested-publisher-confirmed-local-only"
+    "status": "uploaded-testflight-testing"
   },
   "testflight": {
     "group": "Release checks",
     "automatic_distribution": false,
-    "latest_build": "5",
+    "latest_build": "7",
     "version": "1.0.0",
     "status": "testing",
     "tester_count": 1

@@ -12,7 +12,7 @@ Signing preparation is complete on the publisher's Mac: approved development, di
 
 **1.0.0/build 6** addresses nested hover/focus menus and late stylesheet/hydration loading, while preserving menu fades. Local signed testing and both browser regression suites pass. The 13-site visual sweep and its limitations are recorded in `SITE-REVIEW-2026-10-27.md`. Private upload and distribution status are recorded in `release-info.json`; do not alter the existing App Review submission automatically.
 
-**1.0.0/build 7** covers background shorthand/vendor shadow transitions and custom Semantic UI dropdown fallback paint. Both browser suites pass; the signed candidate is installed locally and has not been uploaded or distributed. See the latest `VALIDATION.md` entry for publisher feedback and remaining checks.
+**1.0.0/build 7** covers background shorthand/vendor shadow transitions and custom Semantic UI dropdown fallback paint. Both browser suites pass; the signed candidate is installed locally and is now available to the publisher through Release checks in TestFlight (Testing). See the latest `VALIDATION.md` entry for publisher feedback and remaining checks.
 
 Two real Safari screenshots are uploaded to the private version draft. The calculated age rating is 4+ with regional equivalents, and the content declaration is saved. Worldwide availability is configured for all 175 current storefronts after release; EU compliance now shows Active with no outstanding regulatory requirements. Homepage/support/privacy pages now pass normal HTTPS verification, and HTTP/www redirect to the canonical HTTPS apex.
 
